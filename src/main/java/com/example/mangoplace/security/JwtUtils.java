@@ -14,16 +14,23 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
-public class JwtUtils {
+public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+
+//    @Value("{$jwt.secret}")
+//    private String jwtSecret;
+//
+//    @Value("${jwt.token-validity-in-seconds}")
+//    private long jwtExpirationMs;
 
     @Value("${bezkoder.app.jwtSecret}")
     private String jwtSecret;
 
     @Value("${bezkoder.app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    private long jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
+        //사용자 정보를 기반으로 jwt토큰 생성
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -45,6 +52,7 @@ public class JwtUtils {
     }
 
     public boolean validateJwtToken(String authToken) {
+        //주어진 토큰이 유효한지 검사, 만료, 잘못된 토큰 및 예외 처리
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
             return true;

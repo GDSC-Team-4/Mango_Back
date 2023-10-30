@@ -16,6 +16,7 @@ public class TestController {
     }
 
     @GetMapping("/user")
+    //권한이 있는지 검사
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public String userAccess() {
         return "User Content.";

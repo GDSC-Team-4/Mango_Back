@@ -14,14 +14,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //유저네임
     @Column(length = 20, nullable = false, unique = true)
     private String username;
 
     @Column(length = 120, nullable = false)
     private String password;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String nickname;
+//    //닉네임
+//    @Column(length = 20, nullable = false, unique = true)
+//    private String nickname;
 
     @Email
     @Column(length = 50, nullable = false, unique = true)
