@@ -17,17 +17,17 @@ import java.util.Date;
 public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-//    @Value("{$jwtSecret}")
-//    private String jwtSecret;
-//
-//    @Value("${jwtExpirationMs}")
-//    private long jwtExpirationMs;
-
-    @Value("${bezkoder.app.jwtSecret}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${bezkoder.app.jwtExpirationMs}")
+    @Value("${jwt.token-validity-in-seconds}")
     private long jwtExpirationMs;
+
+//    @Value("${bezkoder.app.jwtSecret}")
+//    private String jwtSecret;
+//
+//    @Value("${bezkoder.app.jwtExpirationMs}")
+//    private long jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
         //사용자 정보를 기반으로 jwt토큰 생성
