@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @GetMapping("/all")
     public String allAccess() {
-        return "Public Content.";
+        return "공용 콘텐츠";
     }
 
     @GetMapping("/user")
     //권한이 있는지 검사
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public String userAccess() {
-        return "User Content.";
+        return "유저 콘텐츠";
     }
 
     @GetMapping("/mod")
