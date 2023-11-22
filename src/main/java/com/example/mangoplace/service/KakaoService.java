@@ -7,6 +7,7 @@ import com.example.mangoplace.repository.KakaoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.*;
@@ -32,13 +33,27 @@ public class KakaoService {
                 .collect(collectingAndThen(toList(),PlaceResponseDto::from));
     }
 
-    public PlaceResponseDto regionRestaurant(String region) {
-        List<KakaoPlace> kakaoPlaces = kakaoRepository.findByKeyword(region);
-        if (kakaoPlaces.isEmpty()) {
-            throw new IllegalArgumentException("검색결과가 없습니다");
+    public List<PlaceResponseDto> regionRestaurant() {
+
+        List<PlaceResponseDto> placeResponseDtoList = new ArrayList<>();
+
+        List<String> placeList = List.of(new String[]{"강남역", "홍대입구역", "역곡역"});
+
+        for (String place : placeList) {
+            List<KakaoPlace> kakaoPlaces = kakaoRepository.findByKeyword(place);
+
+            if (kakaoPlaces.isEmpty()) {
+                throw new IllegalArgumentException("검색결과가 없습니다");
+            }
+            PlaceResponseDto placeResponseDto = kakaoPlaces.stream()
+                    .map(Place::from)
+                    .collect(collectingAndThen(toList(), PlaceResponseDto::from));
+            placeResponseDtoList.add(placeResponseDto);
         }
-        return kakaoPlaces.stream()
-                .map(Place::from)
-                .collect(collectingAndThen(toList(),PlaceResponseDto::from));
+
+//        return kakaoPlaces.stream()
+//                .map(Place::from)
+//                .collect(collectingAndThen(toList(),PlaceResponseDto::from));
+        return  placeResponseDtoList;
     }
 }
