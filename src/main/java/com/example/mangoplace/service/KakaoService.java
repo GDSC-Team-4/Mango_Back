@@ -30,7 +30,7 @@ public class KakaoService {
         }
         return kakaoPlaces.stream()
                 .map(Place::from)
-                .collect(collectingAndThen(toList(),PlaceResponseDto::from));
+                .collect(collectingAndThen(toList(), PlaceResponseDto::from));
     }
 
     public List<PlaceResponseDto> regionRestaurant() {
@@ -51,9 +51,6 @@ public class KakaoService {
             placeResponseDtoList.add(placeResponseDto);
         }
 
-//        return kakaoPlaces.stream()
-//                .map(Place::from)
-//                .collect(collectingAndThen(toList(),PlaceResponseDto::from));
-        return  placeResponseDtoList;
+        return placeResponseDtoList;
     }
 }
