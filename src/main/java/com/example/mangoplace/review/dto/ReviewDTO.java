@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class reviewDTO {
+public class ReviewDTO {
     private long id;
     private String content;
     private int star;
