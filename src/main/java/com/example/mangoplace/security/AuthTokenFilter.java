@@ -44,6 +44,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+            if (request.getMethod().equals("POST") && request.getRequestURI().equals("/api/auth/signout")) {
+                handleLogoutRequest(request);
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e);
         }
@@ -59,5 +64,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
 
         return null;
+    }
+    private void handleLogoutRequest(HttpServletRequest request) {
+        String jwt = parseJwt(request);
+        if (jwt != null) {
+            jwt = null;
+        }
     }
 }
