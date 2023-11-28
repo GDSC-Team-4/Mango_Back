@@ -1,0 +1,7 @@
+POST localhost:8080/review
+Content-Type: application/json
+
+{
+	"content": "This is a review content",
+	"star": 5
+}
