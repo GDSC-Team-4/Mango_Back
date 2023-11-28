@@ -1,4 +1,4 @@
-package com.example.mangoplace.entity;
+package com.example.mangoplace.signup.entity;
 
 public enum ERole {
     ROLE_USER,

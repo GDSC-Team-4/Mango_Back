@@ -1,4 +1,4 @@
-package com.example.mangoplace.payload.response;
+package com.example.mangoplace.signup.payload.response;
 
 public class MessageResponse {
     private String message;

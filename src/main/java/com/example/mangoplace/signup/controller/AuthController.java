@@ -1,4 +1,4 @@
-package com.example.mangoplace.controller;
+package com.example.mangoplace.signup.controller;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,17 +22,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.mangoplace.repository.UserRepository;
-import com.example.mangoplace.entity.ERole;
-import com.example.mangoplace.entity.Role;
-import com.example.mangoplace.entity.User;
-import com.example.mangoplace.payload.request.LoginRequest;
-import com.example.mangoplace.payload.request.SignupRequest;
-import com.example.mangoplace.payload.response.JwtResponse;
-import com.example.mangoplace.payload.response.MessageResponse;
-import com.example.mangoplace.repository.RoleRepository;
-import com.example.mangoplace.security.JwtUtils;
-import com.example.mangoplace.service.UserDetailsImpl;
+import com.example.mangoplace.signup.repository.UserRepository;
+import com.example.mangoplace.signup.entity.ERole;
+import com.example.mangoplace.signup.entity.Role;
+import com.example.mangoplace.signup.entity.User;
+import com.example.mangoplace.signup.payload.request.LoginRequest;
+import com.example.mangoplace.signup.payload.request.SignupRequest;
+import com.example.mangoplace.signup.payload.response.JwtResponse;
+import com.example.mangoplace.signup.payload.response.MessageResponse;
+import com.example.mangoplace.signup.repository.RoleRepository;
+import com.example.mangoplace.signup.security.JwtUtils;
+import com.example.mangoplace.signup.service.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

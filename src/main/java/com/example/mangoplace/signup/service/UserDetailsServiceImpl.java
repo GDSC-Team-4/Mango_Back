@@ -1,7 +1,7 @@
-package com.example.mangoplace.service;
+package com.example.mangoplace.signup.service;
 
-import com.example.mangoplace.entity.User;
-import com.example.mangoplace.repository.UserRepository;
+import com.example.mangoplace.signup.entity.User;
+import com.example.mangoplace.signup.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

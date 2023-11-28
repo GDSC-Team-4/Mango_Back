@@ -1,6 +1,6 @@
-package com.example.mangoplace.security;
+package com.example.mangoplace.signup.security;
 
-import com.example.mangoplace.service.UserDetailsServiceImpl;
+import com.example.mangoplace.signup.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

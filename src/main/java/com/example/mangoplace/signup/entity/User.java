@@ -1,4 +1,4 @@
-package com.example.mangoplace.entity;
+package com.example.mangoplace.signup.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

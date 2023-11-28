@@ -1,4 +1,4 @@
-package com.example.mangoplace.controller;
+package com.example.mangoplace.signup.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;

@@ -1,6 +1,6 @@
-package com.example.mangoplace.security;
+package com.example.mangoplace.signup.security;
 
-import com.example.mangoplace.service.UserDetailsImpl;
+import com.example.mangoplace.signup.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

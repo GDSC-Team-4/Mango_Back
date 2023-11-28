@@ -1,6 +1,6 @@
-package com.example.mangoplace.repository;
+package com.example.mangoplace.signup.repository;
 
-import com.example.mangoplace.entity.User;
+import com.example.mangoplace.signup.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

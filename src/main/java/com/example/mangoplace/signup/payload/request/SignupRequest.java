@@ -1,4 +1,4 @@
-package com.example.mangoplace.payload.request;
+package com.example.mangoplace.signup.payload.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

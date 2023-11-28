@@ -1,6 +1,6 @@
-package com.example.mangoplace.service;
+package com.example.mangoplace.signup.service;
 
-import com.example.mangoplace.entity.User;
+import com.example.mangoplace.signup.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
