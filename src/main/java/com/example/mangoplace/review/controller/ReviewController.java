@@ -2,10 +2,18 @@ package com.example.mangoplace.review.controller;
 
 import com.example.mangoplace.review.dto.ReviewDTO;
 import com.example.mangoplace.review.service.ReviewService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 
@@ -13,7 +21,7 @@ import java.util.List;
 @RequestMapping("/review")
 @AllArgsConstructor
 public class ReviewController {
-
+    private final Logger logger = LoggerFactory.getLogger(ReviewController.class);
     private final ReviewService service;
 
     @GetMapping("")

@@ -51,6 +51,7 @@ public class ReviewService {
     private ReviewDTO convertToDTO(ReviewEntity reviewEntity) {
         return new ReviewDTO(
                 reviewEntity.getId(),
+                reviewEntity.getUsername(),
                 reviewEntity.getContent(),
                 reviewEntity.getStar(),
                 reviewEntity.getCreatedAt(),
@@ -61,6 +62,7 @@ public class ReviewService {
     private ReviewEntity convertToEntity(ReviewDTO reviewDTO) {
         return new ReviewEntity(
                 reviewDTO.getId(),
+                reviewDTO.getUsername(),
                 reviewDTO.getContent(),
                 reviewDTO.getStar(),
                 reviewDTO.getCreatedAt(),

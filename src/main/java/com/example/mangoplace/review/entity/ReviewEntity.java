@@ -21,7 +21,10 @@ public class ReviewEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String username;
+
     private String content;
+
     private int star;
 
     @CreatedDate

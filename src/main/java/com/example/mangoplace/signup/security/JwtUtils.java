@@ -4,11 +4,14 @@ import com.example.mangoplace.signup.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.security.Key;
 import java.util.Date;
@@ -22,12 +25,6 @@ public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
 
     @Value("${jwt.token-validity-in-seconds}")
     private long jwtExpirationMs;
-
-//    @Value("${bezkoder.app.jwtSecret}")
-//    private String jwtSecret;
-//
-//    @Value("${bezkoder.app.jwtExpirationMs}")
-//    private long jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
         //사용자 정보를 기반으로 jwt토큰 생성
@@ -49,6 +46,33 @@ public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    //Header에서 JWT 추출
+    public String getJwt(){
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder. currentRequestAttributes())
+                        .getRequest();
+        //프론트에서 헤더에 담아 넘겨주는 이름
+        return request.getHeader("Authorization");
+    }
+
+    public String getUsername() throws Exception{
+        String access = getJwt();
+        logger.info(access);
+
+        if (access == null || access.length() == 0){
+            throw new Exception("토큰이 비어있습니다.");
+        }
+        Jws<Claims> claims;
+        try{
+            claims = Jwts.parser()
+                    .setSigningKey(key())
+                    .parseClaimsJws(access);
+        } catch (Exception ignored) {
+            throw new Exception("유효하지 않은 토큰입니다.");
+        }
+        return claims.getBody().get("userName", String.class);
     }
 
     public boolean validateJwtToken(String authToken) {

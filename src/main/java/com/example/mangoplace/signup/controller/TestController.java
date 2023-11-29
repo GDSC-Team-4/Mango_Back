@@ -22,10 +22,10 @@ public class TestController {
         return "유저 콘텐츠";
     }
 
-    @GetMapping("/mod")
-    @PreAuthorize("hasRole('MODERATOR')")
+    @GetMapping("/ed")
+    @PreAuthorize("hasRole('EDITOR')")
     public String moderatorAccess() {
-        return "Moderator Board.";
+        return "Editor Board.";
     }
 
     @GetMapping("/admin")
