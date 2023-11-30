@@ -129,12 +129,7 @@ public class AuthController {
                         roles.add(adminRole);
 
                         break;
-                    case "ed":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_EDITOR)
-                                .orElseThrow(() -> new RuntimeException("역할을 선택해주세요."));
-                        roles.add(modRole);
 
-                        break;
                     default:
                         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("역할을 선택해주세요."));

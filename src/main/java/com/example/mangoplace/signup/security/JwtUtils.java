@@ -57,7 +57,8 @@ public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
         return request.getHeader("Authorization");
     }
 
-    public String getUsername() throws Exception{
+    //TODO: 여기 수정해야함
+    public String getUsernameFromToken() throws Exception{
         String access = getJwt();
         logger.info(access);
 
