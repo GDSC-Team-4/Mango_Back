@@ -81,5 +81,5 @@
 * 전체 여행 조회 시 검색조건(여행 이름)으로 특정 여행 조회
 
 ## 📌 ERD
-
+ 
 ![image](https://github.com/FC-BE-ToyProject-Team3/KDT_Y_BE_Toy_Project3/assets/139152515/a3cc7c0b-f550-46ff-b519-0c2ad081f159)
