@@ -17,20 +17,20 @@ public class TestController {
 
     @GetMapping("/user")
     //권한이 있는지 검사
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public String userAccess() {
         return "유저 콘텐츠";
     }
-
-    @GetMapping("/mod")
-    @PreAuthorize("hasRole('MODERATOR')")
-    public String moderatorAccess() {
-        return "Moderator Board.";
-    }
-
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String adminAccess() {
-        return "Admin Board.";
-    }
+//
+//    @GetMapping("/ed")
+//    @PreAuthorize("hasRole('EDITOR')")
+//    public String moderatorAccess() {
+//        return "Editor Board.";
+//    }
+//
+//    @GetMapping("/admin")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public String adminAccess() {
+//        return "Admin Board.";
+//    }
 }

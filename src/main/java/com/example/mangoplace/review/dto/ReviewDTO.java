@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewDTO {
     private long id;
+    private String username;
     private String content;
     private int star;
     private LocalDateTime createdAt;
