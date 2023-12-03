@@ -19,7 +19,6 @@ import java.util.List;
 public class ReviewController {
     private final Logger logger = LoggerFactory.getLogger(ReviewController.class);
     private final ReviewService reviewService;
-    private final JwtUtils jwtUtils;
 
     @GetMapping("")
     public ResponseEntity<List<ReviewDTO>> getAllReviews() {
