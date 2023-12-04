@@ -1,8 +1,10 @@
 package com.example.mangoplace.review.controller;
 
-import com.example.mangoplace.review.dto.ReviewDTO;
+import com.example.mangoplace.review.dto.response.ReviewResponse;
+import com.example.mangoplace.review.dto.request.CreateReviewRequest;
+import com.example.mangoplace.review.dto.request.UpdateReviewRequest;
+import com.example.mangoplace.review.dto.response.UserReviewListReponse;
 import com.example.mangoplace.review.service.ReviewService;
-import com.example.mangoplace.signup.security.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,34 +22,25 @@ public class ReviewController {
     private final Logger logger = LoggerFactory.getLogger(ReviewController.class);
     private final ReviewService reviewService;
 
-    @GetMapping("")
-    public ResponseEntity<List<ReviewDTO>> getAllReviews() {
-        List<ReviewDTO> reviews = reviewService.getAllReviews();
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
-    }
+    @GetMapping
+    public ResponseEntity<List<UserReviewListReponse>> getUserReviews() throws Exception {
+        List<UserReviewListReponse> userReviewListReponses = reviewService.getUserReviews();
+        return ResponseEntity.ok(userReviewListReponses);
 
-    @GetMapping("/{reviewId}")
-    public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long reviewId) {
-        ReviewDTO review = reviewService.getReviewById(reviewId);
-        if (review != null) {
-            return new ResponseEntity<>(review, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     //유저만 작성 가능
     @PostMapping("")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> createReview(@RequestBody ReviewDTO reviewDTO) throws Exception{
-        reviewService.createReview(reviewDTO);
+    public ResponseEntity<Void> createReview(@RequestBody CreateReviewRequest reviewRequest) throws Exception{
+        reviewService.createReview(reviewRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     //create 한 유저만 수정 가능
     @PutMapping("/{reviewId}")
-    public ResponseEntity<Void> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDTO reviewDTO) throws Exception{
-        reviewService.updateReview(reviewId, reviewDTO);
+    public ResponseEntity<Void> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest updateReviewRequest) throws Exception{
+        reviewService.updateReview(reviewId, updateReviewRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

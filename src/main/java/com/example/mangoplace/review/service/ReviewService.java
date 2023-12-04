@@ -1,93 +1,81 @@
 package com.example.mangoplace.review.service;
 
-import com.example.mangoplace.review.dto.ReviewDTO;
+import com.example.mangoplace.review.dto.request.CreateReviewRequest;
+import com.example.mangoplace.review.dto.request.UpdateReviewRequest;
+import com.example.mangoplace.review.dto.response.CreateReviewResponse;
+import com.example.mangoplace.review.dto.response.DeleteReviewResponse;
+import com.example.mangoplace.review.dto.response.UpdateReviewResponse;
+import com.example.mangoplace.review.dto.response.UserReviewListReponse;
 import com.example.mangoplace.review.entity.ReviewEntity;
 import com.example.mangoplace.review.repository.ReviewRepository;
+import com.example.mangoplace.signup.entity.User;
+import com.example.mangoplace.signup.repository.UserRepository;
 import com.example.mangoplace.signup.security.JwtUtils;
-import lombok.AllArgsConstructor;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Delete;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReviewService {
 
     private final ReviewRepository repository;
     private final JwtUtils jwtUtils;
+    private final UserRepository userRepository;
 
-    public List<ReviewDTO> getAllReviews() {
-        List<ReviewEntity> reviewEntities = (List<ReviewEntity>) repository.findAll();
-        return reviewEntities.stream()
-                .map(this::convertToDTO)
+
+    @Transactional
+    public List<UserReviewListReponse> getUserReviews() throws Exception {
+        String username = jwtUtils.getUsernameFromToken();
+        Optional<User> user = userRepository.findByUsername(username);
+        List<ReviewEntity> reviews = repository.findReviewsByUser(user);
+
+        return reviews.stream()
+                .map(UserReviewListReponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public ReviewDTO getReviewById(Long id) {
-        Optional<ReviewEntity> optionalReview = repository.findById(id);
-        return optionalReview.map(this::convertToDTO).orElse(null);
-    }
-
-    public void createReview(ReviewDTO reviewDTO) throws Exception{
-//        String username = jwtUtils.getUsernameFromToken();
-
-        ReviewEntity reviewEntity = convertToEntity(reviewDTO);
-        repository.save(reviewEntity);
-    }
-
-    public void updateReview(Long id, ReviewDTO reviewDTO) throws Exception{
-
+    @Transactional
+    public CreateReviewResponse createReview(CreateReviewRequest createReviewRequest) throws Exception {
         String username = jwtUtils.getUsernameFromToken();
+        ReviewEntity reviewEntity = createReviewRequest.toEntity();
+        ReviewEntity savedReview = repository.save(reviewEntity);
 
-        Optional<ReviewEntity> optionalReview = repository.findById(id);
-        optionalReview.ifPresent(existingReview -> {
-            if(existingReview.getUsername().equals(username)) {
-                existingReview.setContent(reviewDTO.getContent());
-                existingReview.setStar(reviewDTO.getStar());
-                existingReview.setUpdatedAt(LocalDateTime.now());
-                repository.save(existingReview);
-            } else{
-                throw new RuntimeException("업데이트 권한 없음.");
-            }
-        });
+
+        CreateReviewResponse createReviewResponse = CreateReviewResponse.builder()
+                .reviewId(savedReview.getId())
+                .createdAt(savedReview.getCreatedAt())
+                .star(savedReview.getStar())
+                .userId(savedReview.getUser().getId())
+                .userName(savedReview.getUser().getUsername())
+                .content(savedReview.getContent())
+                .build();
+
+
+        return createReviewResponse;
     }
 
-    public void deleteReview(Long id) throws Exception{
-        String username = jwtUtils.getUsernameFromToken();
+    @Transactional
+    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest){
+        ReviewEntity review = repository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("리뷰id를 찾을수 없습니다"));
+        review.update(updateReviewRequest);
+        ReviewEntity updatedReview = repository.save(review);
+        return UpdateReviewResponse.fromEntity(updatedReview);
 
-        Optional<ReviewEntity> optionalReview = repository.findById(id);
-        optionalReview.ifPresent(existingReview -> {
-            if (existingReview.getUsername().equals(username)) {
-                repository.deleteById(id);
-
-            } else{
-                throw new RuntimeException("삭제 권한 없음.");
-            }
-        });
     }
 
-    private ReviewDTO convertToDTO(ReviewEntity reviewEntity) {
-        return new ReviewDTO(
-                reviewEntity.getId(),
-                reviewEntity.getUsername(),
-                reviewEntity.getContent(),
-                reviewEntity.getStar(),
-                reviewEntity.getCreatedAt(),
-                reviewEntity.getUpdatedAt()
-        );
+    @Transactional
+    public DeleteReviewResponse deleteReview(Long reviewId){
+        ReviewEntity review = repository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Id를 찾을수 없습니다"));
+        repository.deleteById(reviewId);
+        return DeleteReviewResponse.fromEntity(review);
     }
 
-    private ReviewEntity convertToEntity(ReviewDTO reviewDTO) {
-        return new ReviewEntity(
-                reviewDTO.getId(),
-                reviewDTO.getUsername(),
-                reviewDTO.getContent(),
-                reviewDTO.getStar(),
-                reviewDTO.getCreatedAt(),
-                reviewDTO.getUpdatedAt()
-        );
-    }
 }
