@@ -71,7 +71,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public DeleteReviewResponse deleteReview(Long reviewId){
+    public DeleteReviewResponse deleteReview(Long reviewId) throws Exception {
+        String username = jwtUtils.getUsernameFromToken();
         ReviewEntity review = repository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Id를 찾을수 없습니다"));
         repository.deleteById(reviewId);
