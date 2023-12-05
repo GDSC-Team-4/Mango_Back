@@ -1,16 +1,18 @@
-package com.example.mangoplace.review.service;
+package com.example.mangoplace.domain.review.service;
 
-import com.example.mangoplace.review.dto.request.CreateReviewRequest;
+
+import com.example.mangoplace.domain.review.dto.request.CreateReviewRequest;
+import com.example.mangoplace.domain.review.dto.response.CreateReviewResponse;
+import com.example.mangoplace.domain.review.dto.response.DeleteReviewResponse;
+import com.example.mangoplace.domain.review.dto.response.UpdateReviewResponse;
+import com.example.mangoplace.domain.review.dto.response.UserReviewListReponse;
+import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.domain.review.repository.ReviewRepository;
+import com.example.mangoplace.domain.user.entity.User;
+import com.example.mangoplace.domain.user.repository.UserRepository;
+import com.example.mangoplace.domain.user.security.JwtUtils;
 import com.example.mangoplace.review.dto.request.UpdateReviewRequest;
-import com.example.mangoplace.review.dto.response.CreateReviewResponse;
-import com.example.mangoplace.review.dto.response.DeleteReviewResponse;
-import com.example.mangoplace.review.dto.response.UpdateReviewResponse;
-import com.example.mangoplace.review.dto.response.UserReviewListReponse;
-import com.example.mangoplace.review.entity.ReviewEntity;
-import com.example.mangoplace.review.repository.ReviewRepository;
-import com.example.mangoplace.signup.entity.User;
-import com.example.mangoplace.signup.repository.UserRepository;
-import com.example.mangoplace.signup.security.JwtUtils;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

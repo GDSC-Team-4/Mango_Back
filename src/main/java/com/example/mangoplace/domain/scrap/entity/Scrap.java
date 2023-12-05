@@ -1,6 +1,7 @@
 package com.example.mangoplace.domain.scrap.entity;
-import com.example.mangoplace.signup.entity.User;
+
 import com.example.mangoplace.domain.shop.entity.Shop;
+import com.example.mangoplace.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,6 @@ public class Scrap {
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    private  User user;
+    private User user;
 
 }

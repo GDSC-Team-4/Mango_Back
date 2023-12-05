@@ -1,6 +1,7 @@
-package com.example.mangoplace.review.dto.response;
+package com.example.mangoplace.domain.review.dto.response;
 
-import com.example.mangoplace.review.entity.ReviewEntity;
+
+import com.example.mangoplace.domain.review.entity.ReviewEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,8 +24,7 @@ public class ReviewResponse {
                 .star(review.getStar())
                 .reviewDate(review.getCreatedAt())
                 .id(review.getId())
-                .userId(review.getUser().getId())
-                .username(review.getUser().getUsername())
+
                 .build();
     }
 }
