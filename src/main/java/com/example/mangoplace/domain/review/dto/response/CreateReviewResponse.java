@@ -1,7 +1,7 @@
 package com.example.mangoplace.domain.review.dto.response;
 
 
-import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.domain.review.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,9 +19,9 @@ public class CreateReviewResponse {
     private Long userId;
     private String userName;
     private String content;
-    private Integer star;
+    private Double star;
 
-    public CreateReviewResponse fromEntity(ReviewEntity review){
+    public CreateReviewResponse fromEntity(Review review){
         return CreateReviewResponse.builder()
                 .reviewId(review.getId())
                 .createdAt(review.getCreatedAt())

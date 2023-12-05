@@ -1,7 +1,7 @@
 package com.example.mangoplace.domain.review.dto.response;
 
 
-import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.domain.review.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class DeleteReviewResponse {
     private Long reviewId;
     private LocalDateTime deleteDate;
 
-    public static DeleteReviewResponse fromEntity(ReviewEntity review){
+    public static DeleteReviewResponse fromEntity(Review review){
         return DeleteReviewResponse.builder()
                 .reviewId(review.getId())
                 .deleteDate(LocalDateTime.now())

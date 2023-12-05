@@ -6,12 +6,12 @@ import com.example.mangoplace.domain.review.dto.response.CreateReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.DeleteReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.UpdateReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.UserReviewListReponse;
-import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.domain.review.entity.Review;
 import com.example.mangoplace.domain.review.repository.ReviewRepository;
 import com.example.mangoplace.domain.user.entity.User;
 import com.example.mangoplace.domain.user.repository.UserRepository;
 import com.example.mangoplace.domain.user.security.JwtUtils;
-import com.example.mangoplace.review.dto.request.UpdateReviewRequest;
+import com.example.mangoplace.domain.review.dto.request.UpdateReviewRequest;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class ReviewService {
     public List<UserReviewListReponse> getUserReviews() throws Exception {
         String username = jwtUtils.getUsernameFromToken();
         Optional<User> user = userRepository.findByUsername(username);
-        List<ReviewEntity> reviews = repository.findReviewsByUser(user);
+        List<Review> reviews = repository.findReviewsByUser(user);
 
         return reviews.stream()
                 .map(UserReviewListReponse::fromEntity)
@@ -45,8 +45,8 @@ public class ReviewService {
     public CreateReviewResponse createReview(CreateReviewRequest createReviewRequest) throws Exception {
         Long userId = JwtUtils.getCurrentUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("userId를 찾을수 없습니다"));
-        ReviewEntity reviewEntity = createReviewRequest.toEntity();
-        ReviewEntity savedReview = repository.save(reviewEntity);
+        Review review = createReviewRequest.toEntity();
+        Review savedReview = repository.save(review);
 
 
         CreateReviewResponse createReviewResponse = CreateReviewResponse.builder()
@@ -62,10 +62,10 @@ public class ReviewService {
 
     @Transactional
     public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest){
-        ReviewEntity review = repository.findById(reviewId)
+        Review review = repository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("리뷰id를 찾을수 없습니다"));
         review.update(updateReviewRequest);
-        ReviewEntity updatedReview = repository.save(review);
+        Review updatedReview = repository.save(review);
         return UpdateReviewResponse.fromEntity(updatedReview);
 
     }
@@ -73,7 +73,7 @@ public class ReviewService {
     @Transactional
     public DeleteReviewResponse deleteReview(Long reviewId) throws Exception {
         String username = jwtUtils.getUsernameFromToken();
-        ReviewEntity review = repository.findById(reviewId)
+        Review review = repository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Id를 찾을수 없습니다"));
         repository.deleteById(reviewId);
         return DeleteReviewResponse.fromEntity(review);

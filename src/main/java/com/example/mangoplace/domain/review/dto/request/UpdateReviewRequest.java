@@ -1,4 +1,4 @@
-package com.example.mangoplace.review.dto.request;
+package com.example.mangoplace.domain.review.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UpdateReviewRequest {
-    private Integer star;
+    private Double star;
     private String content;
 }

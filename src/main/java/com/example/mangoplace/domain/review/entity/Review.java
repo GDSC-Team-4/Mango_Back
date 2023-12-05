@@ -1,32 +1,33 @@
 package com.example.mangoplace.domain.review.entity;
 
+import com.example.mangoplace.domain.reviewimage.entity.ReviewImage;
 import com.example.mangoplace.domain.shop.entity.Shop;
-import com.example.mangoplace.review.dto.request.UpdateReviewRequest;
-import com.example.mangoplace.signup.entity.User;
+import com.example.mangoplace.domain.review.dto.request.UpdateReviewRequest;
+import com.example.mangoplace.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Builder
-public class ReviewEntity {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id")
     private Long id;
 
     private String content;
 
-    private Integer star;
+    private Double star;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -43,6 +44,9 @@ public class ReviewEntity {
     @ManyToOne
     @JoinColumn(name="id")
     private Shop shop;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ReviewImage> reviewImages = new ArrayList<>();
 
     public void update(UpdateReviewRequest reviewUpdateRequest) {
         this.star = reviewUpdateRequest.getStar();

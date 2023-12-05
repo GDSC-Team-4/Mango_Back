@@ -1,7 +1,7 @@
 package com.example.mangoplace.domain.review.dto.request;
 
 
-import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.domain.review.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateReviewRequest {
-    private Integer star;
+    private Double star;
     private String content;
 
-    public ReviewEntity toEntity(){
-        return ReviewEntity.builder()
+    public Review toEntity(){
+        return Review.builder()
                 .content(content)
                 .star(star)
                 .createdAt(LocalDateTime.now())

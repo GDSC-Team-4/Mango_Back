@@ -1,7 +1,7 @@
 package com.example.mangoplace.domain.review.dto.response;
 
 
-import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.domain.review.entity.Review;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,11 +14,11 @@ public class ReviewResponse {
     private long id;
     private String username;
     private String content;
-    private int star;
+    private Double star;
     private LocalDateTime reviewDate;
     private Long userId;
 
-    public static ReviewResponse fromEntity(ReviewEntity review){
+    public static ReviewResponse fromEntity(Review review){
         return ReviewResponse.builder()
                 .content(review.getContent())
                 .star(review.getStar())
