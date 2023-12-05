@@ -7,7 +7,7 @@ import com.example.mangoplace.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -45,8 +45,8 @@ public class Review {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Shop shop;
+    @JoinColumn(name = "shop_id")  // 수정된 부분
+    private Shop shop;  // 수정된 부분
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReviewImage> reviewImages = new ArrayList<>();
@@ -55,6 +55,4 @@ public class Review {
         this.star = reviewUpdateRequest.getStar();
         this.content = reviewUpdateRequest.getContent();
     }
-
 }
-

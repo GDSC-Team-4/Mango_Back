@@ -1,34 +1,31 @@
 package com.example.mangoplace.domain.shop.entity;
 
 import com.example.mangoplace.domain.review.entity.Review;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Shop {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "restaurant_id")
-    private String restaurantId;
-
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
 
-    public Shop(String restaurantId) {
-        this.restaurantId = restaurantId;
-    }
+    @JsonProperty("view_count")
+    private Integer viewCount;
+
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Restaurant> restaurants = new ArrayList<>();
+
 }
