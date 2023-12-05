@@ -1,7 +1,8 @@
 package com.example.mangoplace.domain.review.entity;
 
-import com.example.mangoplace.domain.review.dto.request.UpdateReviewRequest;
-import com.example.mangoplace.domain.signup.entity.User;
+import com.example.mangoplace.domain.shop.entity.Shop;
+import com.example.mangoplace.review.dto.request.UpdateReviewRequest;
+import com.example.mangoplace.signup.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Data
@@ -37,6 +39,10 @@ public class ReviewEntity {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name="id")
+    private Shop shop;
 
     public void update(UpdateReviewRequest reviewUpdateRequest) {
         this.star = reviewUpdateRequest.getStar();

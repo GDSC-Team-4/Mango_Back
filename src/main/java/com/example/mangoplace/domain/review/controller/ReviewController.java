@@ -1,9 +1,10 @@
-package com.example.mangoplace.domain.review.controller;
+package com.example.mangoplace.review.controller;
 
-import com.example.mangoplace.domain.review.dto.request.UpdateReviewRequest;
-import com.example.mangoplace.domain.review.dto.response.UserReviewListReponse;
-import com.example.mangoplace.domain.review.service.ReviewService;
-import com.example.mangoplace.domain.review.dto.request.CreateReviewRequest;
+import com.example.mangoplace.review.dto.response.ReviewResponse;
+import com.example.mangoplace.review.dto.request.CreateReviewRequest;
+import com.example.mangoplace.review.dto.request.UpdateReviewRequest;
+import com.example.mangoplace.review.dto.response.UserReviewListReponse;
+import com.example.mangoplace.review.service.ReviewService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class ReviewController {
 
     }
 
-    // 유저만 작성 가능
+    //유저만 작성 가능
     @PostMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> createReview(@RequestBody CreateReviewRequest reviewRequest) throws Exception{

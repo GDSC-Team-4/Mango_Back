@@ -1,6 +1,6 @@
-package com.example.mangoplace.domain.review.dto.request;
+package com.example.mangoplace.review.dto.request;
 
-import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.review.entity.ReviewEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

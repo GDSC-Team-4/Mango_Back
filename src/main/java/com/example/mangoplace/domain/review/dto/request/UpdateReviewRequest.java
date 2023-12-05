@@ -1,4 +1,4 @@
-package com.example.mangoplace.domain.review.dto.request;
+package com.example.mangoplace.review.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
-package com.example.mangoplace.domain.review.repository;
+package com.example.mangoplace.review.repository;
 
-import com.example.mangoplace.domain.signup.entity.User;
-import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.review.entity.ReviewEntity;
+import com.example.mangoplace.signup.entity.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
