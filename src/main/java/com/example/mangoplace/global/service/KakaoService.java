@@ -27,6 +27,7 @@ public class KakaoService {
      * kakaoPlace = 카카오 장소 검색 결과 값
      * place = 프론트한테 넘겨줄 결과 값
      */
+
     public PlaceResponseDto search(String keyword) {
         List<KakaoPlace> kakaoPlaces = kakaoRepository.findByKeyword(keyword);
         if (kakaoPlaces.isEmpty()) {
