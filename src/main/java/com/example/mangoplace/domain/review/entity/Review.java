@@ -45,7 +45,7 @@ public class Review {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "shop_id")  // 수정된 부분
+    @JoinColumn(name = "restaurant_id")  // 수정된 부분
     private Shop shop;  // 수정된 부분
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

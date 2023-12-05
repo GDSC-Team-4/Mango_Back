@@ -3,7 +3,10 @@ package com.example.mangoplace.domain.shop.entity;
 import com.example.mangoplace.domain.review.entity.Review;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +26,10 @@ public class Shop {
     private List<Review> reviews = new ArrayList<>();
 
     @JsonProperty("view_count")
-    private Integer viewCount;
+    @Builder.Default
+    private Integer viewCount = 0;
 
-    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Restaurant> restaurants = new ArrayList<>();
+    @JsonProperty("review_id")
+    private String restaurantId;
 
 }

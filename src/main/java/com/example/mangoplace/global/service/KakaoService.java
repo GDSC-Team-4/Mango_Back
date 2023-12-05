@@ -1,8 +1,6 @@
 package com.example.mangoplace.global.service;
 
-import com.example.mangoplace.domain.shop.entity.Restaurant;
 import com.example.mangoplace.domain.shop.entity.Shop;
-import com.example.mangoplace.domain.shop.repository.RestaurantRepository;
 import com.example.mangoplace.domain.shop.repository.ShopRepository;
 import com.example.mangoplace.global.dto.KakaoPlace;
 import com.example.mangoplace.global.dto.Place;
@@ -13,17 +11,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
 public class KakaoService {
 
     private final KakaoRepository kakaoRepository;
-    private final RestaurantRepository restaurantRepository;
-    private final RestaurantRepository shopRestaurantRepository;
     private final ShopRepository shopRepository;
 
     /**
@@ -33,26 +29,18 @@ public class KakaoService {
      */
 
     public PlaceResponseDto search(String keyword) {
+
         List<KakaoPlace> kakaoPlaces = kakaoRepository.findByKeyword(keyword);
         if (kakaoPlaces.isEmpty()) {
             throw new IllegalArgumentException("검색결과가 없습니다");
         }
 
-        // Shop 엔터티 생성
-        Shop shop = new Shop();
-        shopRepository.save(shop);
-
-        // 각 KakaoPlace의 ID를 추출하여 Restaurant 엔터티에 저장
-        List<Restaurant> restaurants = new ArrayList<>();
         for (KakaoPlace kakaoPlace : kakaoPlaces) {
-            Restaurant restaurant = new Restaurant();
-            restaurant.setRestaurantId(kakaoPlace.getId());
-            restaurant.setShop(shop);
-            restaurantRepository.save(restaurant);
-            restaurants.add(restaurant);
+            Shop shop = Shop.builder()
+                    .restaurantId(kakaoPlace.getId())
+                    .build();
+            shopRepository.save(shop);
         }
-
-        shop.setRestaurants(restaurants); // Shop 엔터티에 레스토랑 목록 설정
 
         return kakaoPlaces.stream()
                 .map(Place::from)
@@ -60,24 +48,25 @@ public class KakaoService {
     }
 
 
-    public PlaceResponseDto regionRestaurant(String region) {
-        List<KakaoPlace> kakaoPlaces = kakaoRepository.findByKeyword(region);
-        if (kakaoPlaces.isEmpty()) {
-            throw new IllegalArgumentException("검색결과가 없습니다");
+    public List<PlaceResponseDto> regionRestaurant() {
+
+        List<PlaceResponseDto> placeResponseDtoList = new ArrayList<>();
+
+        List<String> placeList = List.of(new String[]{"강남역", "홍대입구역", "역곡역"});
+
+        for (String place : placeList) {
+            List<KakaoPlace> kakaoPlaces = kakaoRepository.findByKeyword(place);
+
+            if (kakaoPlaces.isEmpty()) {
+                throw new IllegalArgumentException("검색결과가 없습니다");
+            }
+            PlaceResponseDto placeResponseDto = kakaoPlaces.stream()
+                    .map(Place::from)
+                    .collect(collectingAndThen(toList(), PlaceResponseDto::from));
+            placeResponseDtoList.add(placeResponseDto);
         }
-        // Shop 엔터티 생성
-        Shop shop = new Shop();
-        shopRepository.save(shop);
 
-        List<Restaurant> restaurants = kakaoPlaces.stream()
-                .map(kakaoPlace -> new Restaurant(kakaoPlace.getId(), shop))
-                .collect(Collectors.toList());
-        restaurantRepository.saveAll(restaurants);
-
-        return kakaoPlaces.stream()
-                .map(Place::from)
-                .collect(collectingAndThen(toList(),PlaceResponseDto::from));
+        return placeResponseDtoList;
     }
-
 
 }
