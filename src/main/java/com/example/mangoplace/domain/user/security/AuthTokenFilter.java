@@ -1,6 +1,6 @@
-package com.example.mangoplace.domain.signup.security;
+package com.example.mangoplace.domain.user.security;
 
-import com.example.mangoplace.domain.signup.service.UserDetailsServiceImpl;
+import com.example.mangoplace.domain.user.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,7 +1,7 @@
-package com.example.mangoplace.domain.signup.repository;
+package com.example.mangoplace.domain.user.repository;
 
-import com.example.mangoplace.domain.signup.entity.ERole;
-import com.example.mangoplace.domain.signup.entity.Role;
+import com.example.mangoplace.domain.user.entity.ERole;
+import com.example.mangoplace.domain.user.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

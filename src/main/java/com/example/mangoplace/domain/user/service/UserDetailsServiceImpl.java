@@ -1,7 +1,7 @@
-package com.example.mangoplace.domain.signup.service;
+package com.example.mangoplace.domain.user.service;
 
-import com.example.mangoplace.domain.signup.repository.UserRepository;
-import com.example.mangoplace.domain.signup.entity.User;
+import com.example.mangoplace.domain.user.repository.UserRepository;
+import com.example.mangoplace.domain.user.entity.User;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

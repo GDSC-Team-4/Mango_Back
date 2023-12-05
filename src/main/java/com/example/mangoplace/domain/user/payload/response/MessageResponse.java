@@ -1,4 +1,4 @@
-package com.example.mangoplace.domain.signup.payload.response;
+package com.example.mangoplace.domain.user.payload.response;
 
 public class MessageResponse {
     private String message;

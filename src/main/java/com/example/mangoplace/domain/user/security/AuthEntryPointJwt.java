@@ -1,4 +1,4 @@
-package com.example.mangoplace.domain.signup.security;
+package com.example.mangoplace.domain.user.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

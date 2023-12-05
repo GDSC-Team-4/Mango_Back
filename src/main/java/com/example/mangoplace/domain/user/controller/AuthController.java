@@ -1,17 +1,17 @@
-package com.example.mangoplace.domain.signup.controller;
+package com.example.mangoplace.domain.user.controller;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.example.mangoplace.domain.signup.payload.request.LoginRequest;
-import com.example.mangoplace.domain.signup.payload.request.SignupRequest;
-import com.example.mangoplace.domain.signup.payload.response.JwtResponse;
-import com.example.mangoplace.domain.signup.payload.response.MessageResponse;
-import com.example.mangoplace.domain.signup.repository.RoleRepository;
-import com.example.mangoplace.domain.signup.repository.UserRepository;
-import com.example.mangoplace.domain.signup.security.JwtUtils;
+import com.example.mangoplace.domain.user.payload.request.LoginRequest;
+import com.example.mangoplace.domain.user.payload.request.SignupRequest;
+import com.example.mangoplace.domain.user.payload.response.JwtResponse;
+import com.example.mangoplace.domain.user.payload.response.MessageResponse;
+import com.example.mangoplace.domain.user.repository.RoleRepository;
+import com.example.mangoplace.domain.user.repository.UserRepository;
+import com.example.mangoplace.domain.user.security.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -29,10 +29,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.mangoplace.domain.signup.entity.ERole;
-import com.example.mangoplace.domain.signup.entity.Role;
-import com.example.mangoplace.domain.signup.entity.User;
-import com.example.mangoplace.domain.signup.service.UserDetailsImpl;
+import com.example.mangoplace.domain.user.entity.ERole;
+import com.example.mangoplace.domain.user.entity.Role;
+import com.example.mangoplace.domain.user.entity.User;
+import com.example.mangoplace.domain.user.service.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

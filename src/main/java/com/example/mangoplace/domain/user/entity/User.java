@@ -1,4 +1,4 @@
-package com.example.mangoplace.domain.signup.entity;
+package com.example.mangoplace.domain.user.entity;
 
 import com.example.mangoplace.domain.review.entity.ReviewEntity;
 import jakarta.persistence.*;
