@@ -1,5 +1,7 @@
 package com.example.mangoplace.global.service;
 
+import com.example.mangoplace.domain.shop.entity.Shop;
+import com.example.mangoplace.domain.shop.repository.ShopRepository;
 import com.example.mangoplace.global.dto.KakaoPlace;
 import com.example.mangoplace.global.dto.Place;
 import com.example.mangoplace.global.dto.PlaceResponseDto;
@@ -8,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -16,6 +19,8 @@ import static java.util.stream.Collectors.*;
 public class KakaoService {
 
     private final KakaoRepository kakaoRepository;
+    private final ShopRepository shopRepository;
+    private final ShopRepository shopRestaurantRepository;
 
     /**
      * kakaoplace -> place 작업을 여기서
@@ -27,6 +32,17 @@ public class KakaoService {
         if (kakaoPlaces.isEmpty()) {
             throw new IllegalArgumentException("검색결과가 없습니다");
         }
+
+        // Shop 엔터티 생성
+        Shop shop = new Shop();
+        shopRepository.save(shop);
+
+        // 각 KakaoPlace의 ID를 추출하여 ShopRestaurant 엔터티에 저장
+        List<Shop> shopRestaurants = kakaoPlaces.stream()
+                .map(kakaoPlace -> new Shop(kakaoPlace.getId()))
+                .collect(Collectors.toList());
+        shopRestaurantRepository.saveAll(shopRestaurants);
+
         return kakaoPlaces.stream()
                 .map(Place::from)
                 .collect(collectingAndThen(toList(),PlaceResponseDto::from));
@@ -37,8 +53,19 @@ public class KakaoService {
         if (kakaoPlaces.isEmpty()) {
             throw new IllegalArgumentException("검색결과가 없습니다");
         }
+        // Shop 엔터티 생성
+        Shop shop = new Shop();
+        shopRepository.save(shop);
+
+        // 각 KakaoPlace의 ID를 추출하여 ShopRestaurant 엔터티에 저장
+        List<Shop> shopRestaurants = kakaoPlaces.stream()
+                .map(kakaoPlace -> new Shop(kakaoPlace.getId()))
+                .collect(Collectors.toList());
+        shopRestaurantRepository.saveAll(shopRestaurants);
         return kakaoPlaces.stream()
                 .map(Place::from)
                 .collect(collectingAndThen(toList(),PlaceResponseDto::from));
     }
+
+
 }
