@@ -1,8 +1,9 @@
-package com.example.mangoplace.domain.signup.service;
+package com.example.mangoplace.signup.service;
 
-import com.example.mangoplace.domain.signup.repository.UserRepository;
-import com.example.mangoplace.domain.signup.entity.User;
+import com.example.mangoplace.signup.entity.User;
+import com.example.mangoplace.signup.repository.UserRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

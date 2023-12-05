@@ -1,6 +1,8 @@
-package com.example.mangoplace.domain.signup.entity;
+package com.example.mangoplace.signup.entity;
 
 import com.example.mangoplace.domain.review.entity.ReviewEntity;
+import com.example.mangoplace.domain.scrap.entity.Scrap;
+import com.example.mangoplace.review.entity.ReviewEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -47,6 +49,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReviewEntity> review = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Scrap> scraps = new ArrayList<>();
 
     @Builder
     public User(String username, String email, String password) {

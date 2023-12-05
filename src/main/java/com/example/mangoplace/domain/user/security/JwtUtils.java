@@ -1,6 +1,6 @@
-package com.example.mangoplace.domain.signup.security;
+package com.example.mangoplace.signup.security;
 
-import com.example.mangoplace.domain.signup.service.UserDetailsImpl;
+import com.example.mangoplace.signup.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -110,7 +110,7 @@ public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null) {
-            throw new IllegalArgumentException("Security Context에 인증 정보가 없습니다.");
+            throw new IllegalArgumentException("Security Context에 인증정보가 없습니다.");
         }
 
         return Long.parseLong(authentication.getName());
