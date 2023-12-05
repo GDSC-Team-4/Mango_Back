@@ -1,7 +1,6 @@
 package com.example.mangoplace.domain.reviewimage.entity;
 
 import com.example.mangoplace.domain.review.entity.Review;
-import com.example.mangoplace.domain.shop.entity.Shop;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
