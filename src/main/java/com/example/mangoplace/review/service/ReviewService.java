@@ -13,7 +13,6 @@ import com.example.mangoplace.signup.repository.UserRepository;
 import com.example.mangoplace.signup.security.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Delete;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,7 +41,8 @@ public class ReviewService {
 
     @Transactional
     public CreateReviewResponse createReview(CreateReviewRequest createReviewRequest) throws Exception {
-        String username = jwtUtils.getUsernameFromToken();
+        Long userId = JwtUtils.getCurrentUserId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("userId를 찾을수 없습니다"));
         ReviewEntity reviewEntity = createReviewRequest.toEntity();
         ReviewEntity savedReview = repository.save(reviewEntity);
 
@@ -51,11 +51,9 @@ public class ReviewService {
                 .reviewId(savedReview.getId())
                 .createdAt(savedReview.getCreatedAt())
                 .star(savedReview.getStar())
-                .userId(savedReview.getUser().getId())
-                .userName(savedReview.getUser().getUsername())
+                .userId(userId)
                 .content(savedReview.getContent())
                 .build();
-
 
         return createReviewResponse;
     }

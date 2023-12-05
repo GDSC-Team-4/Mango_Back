@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 public class UserReviewListReponse {
     private Long reviewId;
     private LocalDateTime createdAt;
-    private Long userId;
-    private String userName;
     private String content;
     private Integer star;
 
@@ -24,7 +22,6 @@ public class UserReviewListReponse {
         return UserReviewListReponse.builder()
                 .reviewId(review.getId())
                 .content(review.getContent())
-                .userId(review.getUser().getId())
                 .star(review.getStar())
                 .createdAt(review.getCreatedAt())
                 .build();
