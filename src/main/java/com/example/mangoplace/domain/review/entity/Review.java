@@ -55,4 +55,8 @@ public class Review {
         this.star = reviewUpdateRequest.getStar();
         this.content = reviewUpdateRequest.getContent();
     }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
+    }
 }

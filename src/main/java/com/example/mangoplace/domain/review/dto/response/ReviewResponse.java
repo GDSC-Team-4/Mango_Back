@@ -2,7 +2,10 @@ package com.example.mangoplace.domain.review.dto.response;
 
 
 import com.example.mangoplace.domain.review.entity.Review;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -17,14 +20,15 @@ public class ReviewResponse {
     private Double star;
     private LocalDateTime reviewDate;
     private Long userId;
+    private String restaurantId;
 
-    public static ReviewResponse fromEntity(Review review){
+    public static ReviewResponse fromEntity(Review review) {
         return ReviewResponse.builder()
                 .content(review.getContent())
                 .star(review.getStar())
                 .reviewDate(review.getCreatedAt())
                 .id(review.getId())
-
                 .build();
     }
+
 }
