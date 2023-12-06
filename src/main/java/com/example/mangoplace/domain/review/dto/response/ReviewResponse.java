@@ -26,7 +26,7 @@ public class ReviewResponse {
         return ReviewResponse.builder()
                 .content(review.getContent())
                 .star(review.getStar())
-                .reviewDate(review.getCreatedAt())
+                .reviewDate(review.getUpdatedAt())
                 .id(review.getId())
                 .build();
     }
