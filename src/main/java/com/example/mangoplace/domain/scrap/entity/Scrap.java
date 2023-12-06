@@ -1,6 +1,6 @@
 package com.example.mangoplace.domain.scrap.entity;
 
-import com.example.mangoplace.domain.shop.entity.Restaurant;
+import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,8 +21,8 @@ public class Scrap {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="shop_id")
-    private Restaurant restaurnt;
+    @JoinColumn(name="restaurant_id")
+    private Shop shop;
 
     @ManyToOne
     @JoinColumn(name="user_id")

@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface ShopRepository extends JpaRepository<Shop,Long> {
+    Boolean existsShopByRestaurantId(String restaurantId);
     Optional<Shop> findByRestaurantId(String restaurantId);
 }
