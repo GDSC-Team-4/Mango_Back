@@ -5,6 +5,7 @@ import com.example.mangoplace.domain.reviewimage.entity.ReviewImage;
 import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,8 +52,15 @@ public class Review {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
+    @Transactional
     public void update(UpdateReviewRequest reviewUpdateRequest) {
         this.star = reviewUpdateRequest.getStar();
         this.content = reviewUpdateRequest.getContent();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
     }
 }

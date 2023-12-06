@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UpdateReviewRequest {
+    private String restaurantId;
     private Double star;
     private String content;
 }

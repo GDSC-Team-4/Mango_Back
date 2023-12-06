@@ -20,12 +20,15 @@ public class CreateReviewResponse {
     private String userName;
     private String content;
     private Double star;
+    private String restaurantId;
 
-    public CreateReviewResponse fromEntity(Review review){
+    public static CreateReviewResponse fromEntity(Review review){
         return CreateReviewResponse.builder()
                 .reviewId(review.getId())
+                .content(review.getContent())
                 .createdAt(review.getCreatedAt())
                 .star(review.getStar())
+                .restaurantId(review.getShop().getRestaurantId())
                 .build();
     }
 }
