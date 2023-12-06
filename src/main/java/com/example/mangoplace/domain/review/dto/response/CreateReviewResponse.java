@@ -25,6 +25,7 @@ public class CreateReviewResponse {
     public static CreateReviewResponse fromEntity(Review review){
         return CreateReviewResponse.builder()
                 .reviewId(review.getId())
+                .content(review.getContent())
                 .createdAt(review.getCreatedAt())
                 .star(review.getStar())
                 .restaurantId(review.getShop().getRestaurantId())
