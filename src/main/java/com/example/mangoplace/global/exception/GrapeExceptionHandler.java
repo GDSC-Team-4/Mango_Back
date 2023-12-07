@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ybe.tr1ll1on.global.exception.TrillionExceptionCode.BAD_REQUEST;
-import static com.ybe.tr1ll1on.global.exception.TrillionExceptionCode.INTERNAL_SERVER_ERROR;
+import static com.example.mangoplace.global.exception.GrapeExceptionCode.BAD_REQUEST;
+import static com.example.mangoplace.global.exception.GrapeExceptionCode.INTERNAL_SERVER_ERROR;
 
 /*
 TODO Global Exception 및 커스텀 Exception 처리를 합니다.
