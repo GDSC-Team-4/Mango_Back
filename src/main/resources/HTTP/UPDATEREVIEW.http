@@ -1,7 +1,0 @@
-PUT localhost:8080/review/1
-Content-Type: application/json
-
-{
-  "content": "리뷰 수정",
-  "star": 5
-}
