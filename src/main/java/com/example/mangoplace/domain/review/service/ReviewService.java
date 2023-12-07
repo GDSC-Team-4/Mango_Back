@@ -8,6 +8,8 @@ import com.example.mangoplace.domain.review.dto.response.DeleteReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.ReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.UpdateReviewResponse;
 import com.example.mangoplace.domain.review.entity.Review;
+import com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundException;
+import com.example.mangoplace.domain.review.exception.ReviewIdNotFoundException;
 import com.example.mangoplace.domain.review.repository.ReviewRepository;
 import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.shop.repository.ShopRepository;
@@ -17,6 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundExceptionCode.RESTAURANT_ID_NOT_FOUND_EXCEPTION;
+import static com.example.mangoplace.domain.review.exception.ReviewIdNotFoundExceptionCode.REVIEW_ID_NOT_FOUND_EXCEPTION;
 
 
 @Service
@@ -28,6 +33,9 @@ public class ReviewService {
 
     @Transactional
     public List<ReviewResponse> getShopReviews(String restaurantId) {
+        Shop shop = shopRepository.findByRestaurantId(restaurantId)
+                .orElseThrow(() -> new RestaurantIdNotFoundException(RESTAURANT_ID_NOT_FOUND_EXCEPTION));
+
         List<Review> reviews = reviewRepository.findByShop_RestaurantId(restaurantId);
 
         return reviews.stream()
@@ -39,7 +47,7 @@ public class ReviewService {
     @Transactional
     public CreateReviewResponse createReview(CreateReviewRequest createReviewRequest) {
         Shop shop = shopRepository.findByRestaurantId(createReviewRequest.getRestaurantId())
-                .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+                .orElseThrow(() -> new RestaurantIdNotFoundException(RESTAURANT_ID_NOT_FOUND_EXCEPTION));
 
         Review review = createReviewRequest.toEntity();
         review.setShop(shop);
@@ -51,7 +59,7 @@ public class ReviewService {
     @Transactional
     public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+                .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
 
         review.update(updateReviewRequest);
         Review updatedReview = reviewRepository.save(review);
@@ -62,7 +70,7 @@ public class ReviewService {
     @Transactional
     public DeleteReviewResponse deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+                .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
 
         reviewRepository.delete(review);
 
