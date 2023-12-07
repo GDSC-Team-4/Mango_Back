@@ -18,7 +18,8 @@ public class ReviewResponse {
     private String username;
     private String content;
     private Double star;
-    private LocalDateTime reviewDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
     private Long userId;
     private String restaurantId;
 
@@ -26,7 +27,8 @@ public class ReviewResponse {
         return ReviewResponse.builder()
                 .content(review.getContent())
                 .star(review.getStar())
-                .reviewDate(review.getUpdatedAt())
+                .updatedDate(review.getUpdatedAt())
+                .createdDate(review.getCreatedAt())
                 .id(review.getId())
                 .build();
     }
