@@ -36,10 +36,12 @@ public class KakaoService {
         }
 
         for (KakaoPlace kakaoPlace : kakaoPlaces) {
-            Shop shop = Shop.builder()
-                    .restaurantId(kakaoPlace.getId())
-                    .build();
-            shopRepository.save(shop);
+            if(!shopRepository.existsShopByRestaurantId(kakaoPlace.getId())){
+                Shop shop = Shop.builder()
+                        .restaurantId(kakaoPlace.getId())
+                        .build();
+                shopRepository.save(shop);
+            }
         }
 
         return kakaoPlaces.stream()

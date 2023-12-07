@@ -16,6 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "restaurantId")})
 public class Shop {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class Shop {
     @Builder.Default
     private Integer viewCount = 0;
 
-    @JsonProperty("review_id")
+    @JsonProperty("restaurant_id")
     private String restaurantId;
 
 }
