@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 import static com.example.mangoplace.global.exception.GrapeExceptionCode.BAD_REQUEST;
 import static com.example.mangoplace.global.exception.GrapeExceptionCode.INTERNAL_SERVER_ERROR;
 
-
-
 /*
 TODO Global Exception 및 커스텀 Exception 처리를 합니다.
  */
@@ -84,10 +82,10 @@ public class GrapeExceptionHandler {
     }
 
     /**
+     * @RequestParam valid 할 때 예외 처리
      * @param e
      * @param request
      * @return
-     * @RequestParam valid 할 때 예외 처리
      */
     @ExceptionHandler(value = {
             ConstraintViolationException.class
@@ -102,7 +100,7 @@ public class GrapeExceptionHandler {
 
         //searchTripListByKeyword.keyword: 검색어를 채워주세요 -> "검색어를 채워주세요" 반환.
         String[] msgList = e.getMessage().split(":");
-        String msg = msgList[msgList.length - 1].substring(1);
+        String msg = msgList[msgList.length-1].substring(1);
 
         return new ResponseEntity<>(
                 new ExceptionResponseDTO(
@@ -115,10 +113,10 @@ public class GrapeExceptionHandler {
     }
 
     /**
+     * @Valid 를 통해 나타나는 예외 처리
      * @param e
      * @param request
      * @return
-     * @Valid 를 통해 나타나는 예외 처리
      */
     @ExceptionHandler(value = {
             MethodArgumentNotValidException.class
@@ -148,7 +146,6 @@ public class GrapeExceptionHandler {
 
     /**
      * 기타 예외 처리
-     *
      * @param e
      * @param request
      * @return
