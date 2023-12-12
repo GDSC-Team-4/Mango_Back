@@ -4,13 +4,11 @@ import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Scrap {
@@ -28,4 +26,13 @@ public class Scrap {
     @JoinColumn(name="user_id")
     private User user;
 
+    public Scrap(Shop shop, User user) {
+        this.shop = shop;
+        this.user = user;
+    }
+
+    //후에 user 생기면 지워야함
+    public Scrap(Shop shop) {
+        this.shop = shop;
+    }
 }
