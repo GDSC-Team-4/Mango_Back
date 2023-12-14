@@ -6,3 +6,17 @@ spring:
           location: classpath:grape-plate-a37dbce4c6c1.json
         project-id: grape-plate
         bucket: grape-plate
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://34.66.70.137:3306/grapeplate?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    username: test1
+    password: a123456789
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+jwt:
+  header: Authorization
+  secret: =============================woosik=============================
+  token-validity-in-seconds: 86400000
