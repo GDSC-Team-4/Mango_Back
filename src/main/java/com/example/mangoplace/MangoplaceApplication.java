@@ -10,4 +10,6 @@ public class MangoplaceApplication {
 		SpringApplication.run(MangoplaceApplication.class, args);
 	}
 
+
+
 }
