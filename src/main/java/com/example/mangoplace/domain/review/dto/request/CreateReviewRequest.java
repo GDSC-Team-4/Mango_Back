@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Data
@@ -18,7 +19,7 @@ public class CreateReviewRequest {
     private String restaurantId;
     private Double star;
     private String content;
-    private MultipartFile image;
+    private List<MultipartFile> images;
 
     public Review toEntity() {
         return Review.builder()
