@@ -71,40 +71,33 @@ public class ReviewService {
         review.setShop(shop);
         Review savedReview = reviewRepository.save(review);
 
-        /**
-         * 한번 해보기
-         */
-        for (MultipartFile image : request.getImages()) {
-            // 이미지 확장자 확인
-            String originalName = image.getOriginalFilename();
-            String ext = getFileExtension(originalName);
+        // 이미지 업로드 및 연결
+        List<MultipartFile> images = request.getImages();
+        if (images != null) {
+            for (MultipartFile image : images) {
+                String originalName = image.getOriginalFilename();
+                String ext = image.getContentType();
+                String uuid = UUID.randomUUID().toString().replace("-", "");
+                String fileName = uuid + "_" + originalName;
 
-            // 이미지 확장자가 허용된 확장자인지 확인
-            if (!isValidImageExtension(ext)) {
-                // 허용되지 않는 확장자의 이미지는 처리하지 않음
-                // 여기에서 예외를 던지거나, 로그를 남기거나, 다른 처리 방법을 선택할 수 있습니다.
-                throw new OnlyImageCanUploadedException(ONLY_IMAGE_CAN_UPLOADED_EXCEPTION);
+                BlobInfo blobInfo = storage.create(
+                        BlobInfo.newBuilder(bucketName, fileName)
+                                .setContentType(ext)
+                                .build(),
+                        image.getInputStream()
+                );
+
+                ReviewImage reviewImage = ReviewImage.builder()
+                        .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+                        .review(savedReview)
+                        .build();
+                reviewImageRepository.save(reviewImage);
             }
-
-            String uuid = UUID.randomUUID().toString().replace("-", "");
-            String fileName = uuid + "_" + originalName;
-
-            BlobInfo blobInfo = storage.create(
-                    BlobInfo.newBuilder(bucketName, fileName)
-                            .setContentType(ext)
-                            .build(),
-                    image.getInputStream()
-            );
-
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-                    .review(savedReview)
-                    .build();
-            reviewImageRepository.save(reviewImage);
         }
 
         return CreateReviewResponse.fromEntity(savedReview);
     }
+
 
     private String generateImageUrl(String blobId) {
         return "https://storage.googleapis.com/" + bucketName + "/" + blobId;
@@ -130,49 +123,48 @@ public class ReviewService {
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
 
         // 이미지 확장자 체크
-        for (MultipartFile image : images) {
-            String originalName = image.getOriginalFilename();
-            String ext = getFileExtension(originalName);
+        if (images != null) {
+            for (MultipartFile image : images) {
+                String originalName = image.getOriginalFilename();
+                String ext = getFileExtension(originalName);
 
-            // 이미지 확장자가 허용된 확장자인지 확인
-            if (!isValidImageExtension(ext)) {
-                throw new OnlyImageCanUploadedException(ONLY_IMAGE_CAN_UPLOADED_EXCEPTION);
+                // 이미지 확장자가 허용된 확장자인지 확인
+                if (!isValidImageExtension(ext)) {
+                    throw new OnlyImageCanUploadedException(ONLY_IMAGE_CAN_UPLOADED_EXCEPTION);
+                }
+            }
+
+            // 이미지 업로드 및 연결
+            for (MultipartFile image : images) {
+                String originalName = image.getOriginalFilename();
+                String ext = getFileExtension(originalName);
+
+                String uuid = UUID.randomUUID().toString().replace("-", "");
+                String fileName = uuid + "_" + originalName;
+
+                BlobInfo blobInfo = storage.create(
+                        BlobInfo.newBuilder(bucketName, fileName)
+                                .setContentType(ext)
+                                .build(),
+                        image.getInputStream()
+                );
+
+                ReviewImage reviewImage = ReviewImage.builder()
+                        .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+                        .review(review)
+                        .build();
+                reviewImageRepository.save(reviewImage);
             }
         }
 
         // 리뷰 업데이트
         review.update(updateReviewRequest);
 
-        // 리뷰 내용 및 평점 업데이트
-        review.setContent(updateReviewRequest.getContent());
-        review.setStar(updateReviewRequest.getStar());
-
         Review updatedReview = reviewRepository.save(review);
-
-        // 이미지 업로드 및 연결
-        for (MultipartFile image : images) {
-            String originalName = image.getOriginalFilename();
-            String ext = getFileExtension(originalName);
-
-            String uuid = UUID.randomUUID().toString().replace("-", "");
-            String fileName = uuid + "_" + originalName;
-
-            BlobInfo blobInfo = storage.create(
-                    BlobInfo.newBuilder(bucketName, fileName)
-                            .setContentType(ext)
-                            .build(),
-                    image.getInputStream()
-            );
-
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-                    .review(updatedReview)
-                    .build();
-            reviewImageRepository.save(reviewImage);
-        }
 
         return UpdateReviewResponse.fromEntity(updatedReview);
     }
+
 
 
     @Transactional
