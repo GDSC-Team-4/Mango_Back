@@ -35,15 +35,30 @@ public class ReviewController {
     public ResponseEntity<CreateReviewResponse> createReview(
             @PathVariable String restaurantId,
             @ModelAttribute CreateReviewRequest reviewWithImageRequest) {
+
+        // 파일 개수 확인
+        System.out.println(reviewWithImageRequest.getImages().size());
+
         reviewWithImageRequest.setRestaurantId(restaurantId);
+
+        System.out.println(reviewWithImageRequest.getImages().size());
+
         try {
-            CreateReviewResponse response = reviewService.createReviewWithImage(reviewWithImageRequest);
+            CreateReviewResponse response = reviewService.createReviewWithImages(reviewWithImageRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IOException e) {
+            // 파일이 제대로 받아졌는지 확인
+            if (reviewWithImageRequest.getImages() == null || reviewWithImageRequest.getImages().isEmpty()) {
+                // 파일이 없는 경우 에러 응답
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .build();
+            }
             // 이미지 업로드 중 오류 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+
     }
+
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<UpdateReviewResponse> updateReview(

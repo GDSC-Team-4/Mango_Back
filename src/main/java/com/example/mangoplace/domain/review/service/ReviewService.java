@@ -15,12 +15,14 @@ import com.example.mangoplace.domain.reviewimage.entity.ReviewImage;
 import com.example.mangoplace.domain.reviewimage.repository.ReviewImageRepository;
 import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.shop.repository.ShopRepository;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,7 +59,7 @@ public class ReviewService {
 
 
     @Transactional
-    public CreateReviewResponse createReviewWithImage(CreateReviewRequest request) throws IOException {
+    public CreateReviewResponse createReviewWithImages(CreateReviewRequest request) throws IOException {
         Shop shop = shopRepository.findByRestaurantId(request.getRestaurantId())
                 .orElseThrow(() -> new RestaurantIdNotFoundException(RESTAURANT_ID_NOT_FOUND_EXCEPTION));
 
@@ -66,26 +68,29 @@ public class ReviewService {
         review.setShop(shop);
         Review savedReview = reviewRepository.save(review);
 
-        // 이미지 업로드
-        String uuid = UUID.randomUUID().toString(); // Google Cloud Storage에 저장될 파일 이름
-        String ext = request.getImage().getContentType(); // 파일의 형식 ex) JPG
+        // 여러 이미지 업로드
+        for (MultipartFile image : request.getImages()) {
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            String ext = image.getContentType();
+            BlobId blobId =  BlobId.of(bucketName,uuid);
+            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
 
-        BlobInfo blobInfo = storage.create(
-                BlobInfo.newBuilder(bucketName, uuid)
-                        .setContentType(ext)
-                        .build(),
-                request.getImage().getInputStream()
-        );
+            storage.create(blobInfo,image.getBytes());
 
-        // 리뷰 이미지 엔터티 생성 및 저장
-        ReviewImage reviewImage = ReviewImage.builder()
-                .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-                .review(savedReview)
-                .build();
-        reviewImageRepository.save(reviewImage);
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+                    .review(savedReview)
+                    .build();
+            reviewImageRepository.save(reviewImage);
+
+            System.out.println(uuid);
+            System.out.println(ext);
+            System.out.println(blobInfo);
+        }
 
         return CreateReviewResponse.fromEntity(savedReview);
     }
+
     private String generateImageUrl(String blobId) {
         return "https://storage.googleapis.com/" + bucketName + "/" + blobId;
     }
