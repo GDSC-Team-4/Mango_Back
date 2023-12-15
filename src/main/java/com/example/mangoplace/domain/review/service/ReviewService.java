@@ -47,6 +47,7 @@ public class ReviewService {
     private String bucketName;
 
     private final Storage storage;
+
     @Transactional
     public List<ReviewResponse> getShopReviews(String restaurantId) {
         Shop shop = shopRepository.findByRestaurantId(restaurantId)
@@ -69,48 +70,71 @@ public class ReviewService {
         Review review = request.toEntity();
         review.setShop(shop);
         Review savedReview = reviewRepository.save(review);
-        // 여러 이미지 업로드
-        List<CompletableFuture<ReviewImage>> uploadFutures = new ArrayList<>();
+
+        /**
+         * 한번 해보기
+         */
         for (MultipartFile image : request.getImages()) {
-            CompletableFuture<ReviewImage> uploadFuture = CompletableFuture.supplyAsync(() -> {
-                String uuid;
-                try {
-                    uuid = UUID.randomUUID().toString().replace("-", "");
+            String originalName = image.getOriginalFilename();
+            String ext = image.getContentType();
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            String fileName = uuid + "_" + originalName;
 
-                    String ext = image.getContentType();
-                    BlobId blobId = BlobId.of(bucketName, uuid);
-                    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
+            BlobInfo blobInfo = storage.create(
+                    BlobInfo.newBuilder(bucketName, fileName)
+                            .setContentType(ext)
+                            .build(),
+                    image.getInputStream()
+            );
 
-                    storage.create(blobInfo, image.getBytes());
-
-                    ReviewImage reviewImage = ReviewImage.builder()
-                            .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-                            .review(savedReview)
-                            .build();
-                    return reviewImageRepository.save(reviewImage);
-
-//                    System.out.println(uuid);
-//                    System.out.println(ext);
-//                    System.out.println(blobInfo);
-
-                } catch (IOException exception) {
-                    throw new RuntimeException(exception);
-                }
-            });
-
-            uploadFutures.add(uploadFuture);
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+                    .review(savedReview)
+                    .build();
+            reviewImageRepository.save(reviewImage);
         }
 
-        CompletableFuture.allOf(uploadFutures.toArray(new CompletableFuture[0])).join();
 
-        List<ReviewImage> reviewImages = uploadFutures.stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
+//        // 여러 이미지 업로드
+//        List<CompletableFuture<ReviewImage>> uploadFutures = new ArrayList<>();
+//        for (MultipartFile image : request.getImages()) {
+//            CompletableFuture<ReviewImage> uploadFuture = CompletableFuture.supplyAsync(() -> {
+//                String uuid;
+//                try {
+//                    uuid = UUID.randomUUID().toString().replace("-", "");
+//
+//                    String ext = image.getContentType();
+//                    BlobId blobId = BlobId.of(bucketName, uuid);
+//                    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
+//
+//                    storage.create(blobInfo, image.getBytes());
+//
+//                    ReviewImage reviewImage = ReviewImage.builder()
+//                            .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+//                            .review(savedReview)
+//                            .build();
+//                    return reviewImageRepository.save(reviewImage);
+//
+////                    System.out.println(uuid);
+////                    System.out.println(ext);
+////                    System.out.println(blobInfo);
+//
+//                } catch (IOException exception) {
+//                    throw new RuntimeException(exception);
+//                }
+//            });
+//
+//            uploadFutures.add(uploadFuture);
+//        }
+//
+//        CompletableFuture.allOf(uploadFutures.toArray(new CompletableFuture[0])).join();
+//
+//        List<ReviewImage> reviewImages = uploadFutures.stream()
+//                .map(CompletableFuture::join)
+//                .collect(Collectors.toList());
 
         return CreateReviewResponse.fromEntity(savedReview);
     }
-
-
 
 
 //        for (MultipartFile image : request.getImages()) {

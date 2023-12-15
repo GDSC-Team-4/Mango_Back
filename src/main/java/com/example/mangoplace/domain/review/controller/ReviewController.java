@@ -37,11 +37,7 @@ public class ReviewController {
             @ModelAttribute CreateReviewRequest reviewWithImageRequest) {
 
         // 파일 개수 확인
-        System.out.println(reviewWithImageRequest.getImages().size());
-
         reviewWithImageRequest.setRestaurantId(restaurantId);
-
-        System.out.println(reviewWithImageRequest.getImages().size());
 
         try {
             CreateReviewResponse response = reviewService.createReviewWithImages(reviewWithImageRequest);
