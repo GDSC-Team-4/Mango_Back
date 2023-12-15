@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,10 +60,19 @@ public class ReviewController {
     @PutMapping("/{reviewId}")
     public ResponseEntity<UpdateReviewResponse> updateReview(
             @PathVariable Long reviewId,
-            @RequestBody UpdateReviewRequest updateReviewRequest) {
-        UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+            @ModelAttribute UpdateReviewRequest updateReviewRequest,
+            @RequestParam(value = "newImages", required = false) List<MultipartFile> newImages) {
+
+        try {
+            UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, newImages);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (IOException e) {
+            // 이미지 업로드 중 오류 발생 시 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
+
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<DeleteReviewResponse> deleteReview(@PathVariable Long reviewId) {

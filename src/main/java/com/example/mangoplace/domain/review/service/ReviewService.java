@@ -99,15 +99,42 @@ public class ReviewService {
     }
 
     @Transactional
-    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest) {
+    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest, List<MultipartFile> newImages) throws IOException {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
 
+        // 기존 이미지를 GCS에서 삭제
+        for (ReviewImage image : review.getReviewImages()) {
+            deleteImage(image.getImageUrl());
+        }
+
+        // 새로운 이미지 업로드
+        for (MultipartFile newImage : newImages) {
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            String ext = newImage.getContentType();
+
+            BlobInfo blobInfo = storage.create(
+                    BlobInfo.newBuilder(bucketName, uuid)
+                            .setContentType(ext)
+                            .build(),
+                    newImage.getInputStream()
+            );
+
+            // 리뷰 이미지 엔터티 생성 및 저장
+            ReviewImage newReviewImage = ReviewImage.builder()
+                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+                    .review(review)
+                    .build();
+            reviewImageRepository.save(newReviewImage);
+        }
+
+        // 리뷰 정보 업데이트
         review.update(updateReviewRequest);
         Review updatedReview = reviewRepository.save(review);
 
         return UpdateReviewResponse.fromEntity(updatedReview);
     }
+
 
     @Transactional
     public DeleteReviewResponse deleteReview(Long reviewId) {
