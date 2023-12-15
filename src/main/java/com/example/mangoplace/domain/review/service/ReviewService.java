@@ -8,6 +8,7 @@ import com.example.mangoplace.domain.review.dto.response.DeleteReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.ReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.UpdateReviewResponse;
 import com.example.mangoplace.domain.review.entity.Review;
+import com.example.mangoplace.domain.review.exception.OnlyImageCanUploadedException;
 import com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundException;
 import com.example.mangoplace.domain.review.exception.ReviewIdNotFoundException;
 import com.example.mangoplace.domain.review.repository.ReviewRepository;
@@ -24,10 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.example.mangoplace.domain.review.exception.OnlyImageCanUploadedExceptionCode.ONLY_IMAGE_CAN_UPLOADED_EXCEPTION;
 import static com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundExceptionCode.RESTAURANT_ID_NOT_FOUND_EXCEPTION;
 import static com.example.mangoplace.domain.review.exception.ReviewIdNotFoundExceptionCode.REVIEW_ID_NOT_FOUND_EXCEPTION;
 
@@ -72,8 +75,17 @@ public class ReviewService {
          * 한번 해보기
          */
         for (MultipartFile image : request.getImages()) {
+            // 이미지 확장자 확인
             String originalName = image.getOriginalFilename();
-            String ext = image.getContentType();
+            String ext = getFileExtension(originalName);
+
+            // 이미지 확장자가 허용된 확장자인지 확인
+            if (!isValidImageExtension(ext)) {
+                // 허용되지 않는 확장자의 이미지는 처리하지 않음
+                // 여기에서 예외를 던지거나, 로그를 남기거나, 다른 처리 방법을 선택할 수 있습니다.
+                throw new OnlyImageCanUploadedException(ONLY_IMAGE_CAN_UPLOADED_EXCEPTION);
+            }
+
             String uuid = UUID.randomUUID().toString().replace("-", "");
             String fileName = uuid + "_" + originalName;
 
@@ -98,39 +110,66 @@ public class ReviewService {
         return "https://storage.googleapis.com/" + bucketName + "/" + blobId;
     }
 
+    private String getFileExtension(String fileName) {
+        if (fileName != null && fileName.lastIndexOf('.') != -1) {
+            return fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+        }
+        return null;
+    }
+
+    private boolean isValidImageExtension(String ext) {
+        // 허용된 확장자 목록
+        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png");
+
+        return ext != null && allowedExtensions.contains(ext);
+    }
+
     @Transactional
-    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest, List<MultipartFile> newImages) throws IOException {
+    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest, List<MultipartFile> images) throws IOException {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
 
-        // 기존 이미지를 GCS에서 삭제
-        for (ReviewImage image : review.getReviewImages()) {
-            deleteImage(image.getImageUrl());
+        // 이미지 확장자 체크
+        for (MultipartFile image : images) {
+            String originalName = image.getOriginalFilename();
+            String ext = getFileExtension(originalName);
+
+            // 이미지 확장자가 허용된 확장자인지 확인
+            if (!isValidImageExtension(ext)) {
+                throw new OnlyImageCanUploadedException(ONLY_IMAGE_CAN_UPLOADED_EXCEPTION);
+            }
         }
 
-        // 새로운 이미지 업로드
-        for (MultipartFile newImage : newImages) {
+        // 리뷰 업데이트
+        review.update(updateReviewRequest);
+
+        // 리뷰 내용 및 평점 업데이트
+        review.setContent(updateReviewRequest.getContent());
+        review.setStar(updateReviewRequest.getStar());
+
+        Review updatedReview = reviewRepository.save(review);
+
+        // 이미지 업로드 및 연결
+        for (MultipartFile image : images) {
+            String originalName = image.getOriginalFilename();
+            String ext = getFileExtension(originalName);
+
             String uuid = UUID.randomUUID().toString().replace("-", "");
-            String ext = newImage.getContentType();
+            String fileName = uuid + "_" + originalName;
 
             BlobInfo blobInfo = storage.create(
-                    BlobInfo.newBuilder(bucketName, uuid)
+                    BlobInfo.newBuilder(bucketName, fileName)
                             .setContentType(ext)
                             .build(),
-                    newImage.getInputStream()
+                    image.getInputStream()
             );
 
-            // 리뷰 이미지 엔터티 생성 및 저장
-            ReviewImage newReviewImage = ReviewImage.builder()
+            ReviewImage reviewImage = ReviewImage.builder()
                     .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-                    .review(review)
+                    .review(updatedReview)
                     .build();
-            reviewImageRepository.save(newReviewImage);
+            reviewImageRepository.save(reviewImage);
         }
-
-        // 리뷰 정보 업데이트
-        review.update(updateReviewRequest);
-        Review updatedReview = reviewRepository.save(review);
 
         return UpdateReviewResponse.fromEntity(updatedReview);
     }

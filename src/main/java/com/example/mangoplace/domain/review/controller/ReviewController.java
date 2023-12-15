@@ -7,6 +7,7 @@ import com.example.mangoplace.domain.review.dto.response.DeleteReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.ReviewResponse;
 import com.example.mangoplace.domain.review.dto.response.UpdateReviewResponse;
 import com.example.mangoplace.domain.review.service.ReviewService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("/{restaurantId}")
     public ResponseEntity<List<ReviewResponse>> getReviews(
@@ -71,7 +73,6 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
 
     @DeleteMapping("/{reviewId}")

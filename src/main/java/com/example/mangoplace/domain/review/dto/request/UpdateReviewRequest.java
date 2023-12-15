@@ -1,11 +1,8 @@
 package com.example.mangoplace.domain.review.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
