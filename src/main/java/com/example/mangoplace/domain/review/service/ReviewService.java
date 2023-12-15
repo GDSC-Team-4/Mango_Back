@@ -15,7 +15,6 @@ import com.example.mangoplace.domain.reviewimage.entity.ReviewImage;
 import com.example.mangoplace.domain.reviewimage.repository.ReviewImageRepository;
 import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.shop.repository.ShopRepository;
-import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import jakarta.transaction.Transactional;
@@ -25,10 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundExceptionCode.RESTAURANT_ID_NOT_FOUND_EXCEPTION;
@@ -94,70 +91,8 @@ public class ReviewService {
             reviewImageRepository.save(reviewImage);
         }
 
-
-//        // 여러 이미지 업로드
-//        List<CompletableFuture<ReviewImage>> uploadFutures = new ArrayList<>();
-//        for (MultipartFile image : request.getImages()) {
-//            CompletableFuture<ReviewImage> uploadFuture = CompletableFuture.supplyAsync(() -> {
-//                String uuid;
-//                try {
-//                    uuid = UUID.randomUUID().toString().replace("-", "");
-//
-//                    String ext = image.getContentType();
-//                    BlobId blobId = BlobId.of(bucketName, uuid);
-//                    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
-//
-//                    storage.create(blobInfo, image.getBytes());
-//
-//                    ReviewImage reviewImage = ReviewImage.builder()
-//                            .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-//                            .review(savedReview)
-//                            .build();
-//                    return reviewImageRepository.save(reviewImage);
-//
-////                    System.out.println(uuid);
-////                    System.out.println(ext);
-////                    System.out.println(blobInfo);
-//
-//                } catch (IOException exception) {
-//                    throw new RuntimeException(exception);
-//                }
-//            });
-//
-//            uploadFutures.add(uploadFuture);
-//        }
-//
-//        CompletableFuture.allOf(uploadFutures.toArray(new CompletableFuture[0])).join();
-//
-//        List<ReviewImage> reviewImages = uploadFutures.stream()
-//                .map(CompletableFuture::join)
-//                .collect(Collectors.toList());
-
         return CreateReviewResponse.fromEntity(savedReview);
     }
-
-
-//        for (MultipartFile image : request.getImages()) {
-//            String uuid = UUID.randomUUID().toString().replace("-", "");
-//            String ext = image.getContentType();
-//            BlobId blobId =  BlobId.of(bucketName,uuid);
-//            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
-//
-//            storage.create(blobInfo,image.getBytes());
-//
-//            ReviewImage reviewImage = ReviewImage.builder()
-//                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-//                    .review(savedReview)
-//                    .build();
-//            reviewImageRepository.save(reviewImage);
-//
-//            System.out.println(uuid);
-//            System.out.println(ext);
-//            System.out.println(blobInfo);
-//        }
-//
-//        return CreateReviewResponse.fromEntity(savedReview);
-
 
     private String generateImageUrl(String blobId) {
         return "https://storage.googleapis.com/" + bucketName + "/" + blobId;
@@ -179,8 +114,36 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
 
+        // 연관된 이미지를 GCS에서 삭제
+        for (ReviewImage image : review.getReviewImages()) {
+            deleteImage(image.getImageUrl());
+        }
+
+        // 리뷰를 데이터베이스에서 삭제
         reviewRepository.delete(review);
 
         return DeleteReviewResponse.fromEntity(review);
     }
+
+    private void deleteImage(String imageUrl) {
+        // imageUrl에서 Blob ID 추출
+        String blobId = extractBlobIdFromImageUrl(imageUrl);
+
+        // GCS에서 이미지 삭제
+        storage.delete(bucketName, blobId);
+    }
+
+    private String extractBlobIdFromImageUrl(String imageUrl) {
+        // URL에서 마지막 "/"의 인덱스를 찾기
+        int lastSlashIndex = imageUrl.lastIndexOf('/');
+
+        // 마지막 "/" 이후의 문자열을 추출 (Blob ID)
+        if (lastSlashIndex != -1 && lastSlashIndex < imageUrl.length() - 1) {
+            return imageUrl.substring(lastSlashIndex + 1);
+        } else {
+            // "/"이 발견되지 않거나 마지막 문자가 "/"인 경우
+            throw new IllegalArgumentException("Invalid image URL format");
+        }
+    }
+
 }
