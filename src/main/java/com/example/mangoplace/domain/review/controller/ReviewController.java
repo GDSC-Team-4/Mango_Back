@@ -63,10 +63,10 @@ public class ReviewController {
     public ResponseEntity<UpdateReviewResponse> updateReview(
             @PathVariable Long reviewId,
             @ModelAttribute UpdateReviewRequest updateReviewRequest,
-            @RequestParam(value = "newImages", required = false) List<MultipartFile> newImages) {
+            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
 
         try {
-            UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, newImages);
+            UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, images);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (IOException e) {
             // 이미지 업로드 중 오류 발생 시 처리
