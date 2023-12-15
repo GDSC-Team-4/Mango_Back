@@ -25,8 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundExceptionCode.RESTAURANT_ID_NOT_FOUND_EXCEPTION;
@@ -67,29 +69,71 @@ public class ReviewService {
         Review review = request.toEntity();
         review.setShop(shop);
         Review savedReview = reviewRepository.save(review);
-
         // 여러 이미지 업로드
+        List<CompletableFuture<ReviewImage>> uploadFutures = new ArrayList<>();
         for (MultipartFile image : request.getImages()) {
-            String uuid = UUID.randomUUID().toString().replace("-", "");
-            String ext = image.getContentType();
-            BlobId blobId =  BlobId.of(bucketName,uuid);
-            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
+            CompletableFuture<ReviewImage> uploadFuture = CompletableFuture.supplyAsync(() -> {
+                String uuid;
+                try {
+                    uuid = UUID.randomUUID().toString().replace("-", "");
 
-            storage.create(blobInfo,image.getBytes());
+                    String ext = image.getContentType();
+                    BlobId blobId = BlobId.of(bucketName, uuid);
+                    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
 
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
-                    .review(savedReview)
-                    .build();
-            reviewImageRepository.save(reviewImage);
+                    storage.create(blobInfo, image.getBytes());
 
-            System.out.println(uuid);
-            System.out.println(ext);
-            System.out.println(blobInfo);
+                    ReviewImage reviewImage = ReviewImage.builder()
+                            .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+                            .review(savedReview)
+                            .build();
+                    return reviewImageRepository.save(reviewImage);
+
+//                    System.out.println(uuid);
+//                    System.out.println(ext);
+//                    System.out.println(blobInfo);
+
+                } catch (IOException exception) {
+                    throw new RuntimeException(exception);
+                }
+            });
+
+            uploadFutures.add(uploadFuture);
         }
+
+        CompletableFuture.allOf(uploadFutures.toArray(new CompletableFuture[0])).join();
+
+        List<ReviewImage> reviewImages = uploadFutures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
 
         return CreateReviewResponse.fromEntity(savedReview);
     }
+
+
+
+
+//        for (MultipartFile image : request.getImages()) {
+//            String uuid = UUID.randomUUID().toString().replace("-", "");
+//            String ext = image.getContentType();
+//            BlobId blobId =  BlobId.of(bucketName,uuid);
+//            BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(ext).build();
+//
+//            storage.create(blobInfo,image.getBytes());
+//
+//            ReviewImage reviewImage = ReviewImage.builder()
+//                    .imageUrl(generateImageUrl(blobInfo.getBlobId().getName()))
+//                    .review(savedReview)
+//                    .build();
+//            reviewImageRepository.save(reviewImage);
+//
+//            System.out.println(uuid);
+//            System.out.println(ext);
+//            System.out.println(blobInfo);
+//        }
+//
+//        return CreateReviewResponse.fromEntity(savedReview);
+
 
     private String generateImageUrl(String blobId) {
         return "https://storage.googleapis.com/" + bucketName + "/" + blobId;
