@@ -19,7 +19,7 @@
 :-----------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------: 
 |                            ![WestSilver99](https://avatars.githubusercontent.com/WestSilver99)                            |                             ![Su-daa](https://avatars.githubusercontent.com/Su-daa)                              | ![YWSIK](https://avatars.githubusercontent.com/YWSIK) |
 |                                      [WestSilver99](https://github.com/WestSilver99)                                      |                                       [Su-daa](https://github.com/Su-daa)                                        |           [YWSIK](https://github.com/YWSIK)            |
-| <ul><li>Goole Cloud Service(이미지 저장)</li><li>Review</li></ul> | <ul><li>Google Cloud Platform(서버 배포)</li><li>Scrap</li></ul> | <ul><li>Security</li><li>User</li></ul> |
+| <ul><li>Goole Cloud Storage(이미지 저장)</li><li>Review</li></ul> | <ul><li>Google Cloud Platform(서버 배포)</li><li>Scrap</li></ul> | <ul><li>Security</li><li>User</li></ul> |
 
 
 <br>
