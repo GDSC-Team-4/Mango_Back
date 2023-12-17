@@ -1,14 +1,12 @@
 package com.example.mangoplace.global.controller;
 
 import com.example.mangoplace.global.dto.ErrorResponse;
+import com.example.mangoplace.global.dto.PlaceDetailResponseDto;
 import com.example.mangoplace.global.dto.PlaceResponseDto;
 import com.example.mangoplace.global.service.KakaoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,6 +33,11 @@ public class KakaoController {
     @GetMapping("/main")
     public ResponseEntity<List<PlaceResponseDto>> findRegionRestaurant() {
         return ResponseEntity.ok(kakaoService.regionRestaurant());
+    }
+
+    @GetMapping("/shops/{shopId}")
+    public ResponseEntity<PlaceDetailResponseDto> placeDetail(@PathVariable String shopId) {
+        return ResponseEntity.ok(kakaoService.placeDetail(shopId));
     }
 
     @ExceptionHandler(value = {RuntimeException.class})

@@ -10,4 +10,6 @@ public interface ScrapRepository extends JpaRepository<Scrap,Long> {
 
     //후에 user 생기면 지워야함
     Optional<Scrap> findByShop_RestaurantId(String restaurantId);
+
+    Long countByShop_RestaurantId(String restaurantId);
 }

@@ -9,7 +9,4 @@ public class MangoplaceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MangoplaceApplication.class, args);
 	}
-
-
-
 }
