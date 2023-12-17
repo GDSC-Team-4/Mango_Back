@@ -55,6 +55,7 @@ public class ReviewService {
 
     @Transactional
     public List<ReviewResponse> getShopReviews(String restaurantId) {
+
         Shop shop = shopRepository.findByRestaurantId(restaurantId)
                 .orElseThrow(() -> new RestaurantIdNotFoundException(RESTAURANT_ID_NOT_FOUND_EXCEPTION));
 
