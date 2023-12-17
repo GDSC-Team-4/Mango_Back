@@ -89,7 +89,7 @@
 
 <br/>
 
- <img src="https://img.shields.io/badge/googlecloudstorage-4285F4?style=for-the-badge&logo=googlecloudstorager&logoColor=white"/>
+ <img src="https://img.shields.io/badge/googlecloudstorage-AECBFA?style=for-the-badge&logo=googlecloud&logoColor=white"/>
 
 <br/>
 
