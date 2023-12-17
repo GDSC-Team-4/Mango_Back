@@ -1,4 +1,4 @@
-package com.example.mangoplace.domain.user.entity;
+package com.example.mangoplace.domain.auth.entity;
 
 import jakarta.persistence.*;
 
