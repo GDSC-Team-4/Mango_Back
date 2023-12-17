@@ -3,7 +3,7 @@ package com.example.mangoplace.domain.review.entity;
 import com.example.mangoplace.domain.review.dto.request.UpdateReviewRequest;
 import com.example.mangoplace.domain.reviewimage.entity.ReviewImage;
 import com.example.mangoplace.domain.shop.entity.Shop;
-import com.example.mangoplace.domain.user.entity.User;
+import com.example.mangoplace.domain.auth.entity.User;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.*;

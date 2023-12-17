@@ -1,4 +1,4 @@
-package com.example.mangoplace.domain.user.entity;
+package com.example.mangoplace.domain.auth.entity;
 
 import com.example.mangoplace.domain.review.entity.Review;
 import com.example.mangoplace.domain.scrap.entity.Scrap;
@@ -26,8 +26,8 @@ public class User {
     @Column(length = 20, nullable = false, unique = true)
     private String username;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String nickname;
+//    @Column(length = 20, nullable = false, unique = true)
+//    private String nickname;
 
     @Column(length = 120, nullable = false)
     private String password;

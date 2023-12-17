@@ -5,7 +5,7 @@ import com.example.mangoplace.domain.scrap.entity.Scrap;
 import com.example.mangoplace.domain.scrap.repository.ScrapRepository;
 import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.shop.repository.ShopRepository;
-import com.example.mangoplace.domain.user.entity.User;
+import com.example.mangoplace.domain.auth.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
