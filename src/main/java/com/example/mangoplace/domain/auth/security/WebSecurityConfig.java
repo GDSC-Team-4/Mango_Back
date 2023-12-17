@@ -3,6 +3,7 @@ package com.example.mangoplace.domain.auth.security;
 import com.example.mangoplace.domain.auth.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -65,7 +66,9 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll() //다음 엔드포인트를 인증없이 허용
-                                .requestMatchers("/**").permitAll() //다음 엔드포인트를 인증없이 허용
+                               // .requestMatchers("/**").permitAll() //다음 엔드포인트를 인증없이 허용
+                                .requestMatchers(HttpMethod.GET, "/review/**").permitAll()
+                                .requestMatchers("/review/**").authenticated()
                                 .anyRequest().authenticated() //그 외 모든 요청 인증된 사용자에게만 허용
                 );
 
@@ -75,4 +78,6 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
+
 }
