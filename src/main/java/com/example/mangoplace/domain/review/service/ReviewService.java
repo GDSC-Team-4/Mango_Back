@@ -204,4 +204,9 @@ public class ReviewService {
         }
     }
 
+    @Transactional
+    public Review getReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
+    }
 }

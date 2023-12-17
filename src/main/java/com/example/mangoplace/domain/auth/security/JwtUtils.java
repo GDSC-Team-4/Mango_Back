@@ -44,50 +44,6 @@ public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key()).build()
-                .parseClaimsJws(token).getBody().getSubject();
-    }
-
-    //Header에서 JWT 추출
-    public String getJwt() {
-        HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-                        .getRequest();
-
-        // 프론트에서 헤더에 담아 넘겨주는 이름
-        String authorizationHeader = request.getHeader("Authorization");
-
-        // 만약 Authorization 헤더가 존재하고 "Bearer "로 시작한다면 해당 부분을 제거하고 반환
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            return authorizationHeader.substring(7); // "Bearer " 부분을 제외한 토큰 반환
-        }
-
-        return authorizationHeader;
-    }
-
-
-    //TODO: 여기 수정해야함
-    public String getUsernameFromToken() throws Exception{
-        String access = getJwt();
-        logger.info(access);
-
-        if (access == null || access.length() == 0){
-            throw new Exception("토큰이 비어있습니다.");
-        }
-        Jws<Claims> claims;
-
-        try{
-            claims = Jwts.parser()
-                    .setSigningKey(key())
-                    .parseClaimsJws(access);
-        } catch (Exception ignored) {
-
-            throw new Exception("유효하지 않은 토큰입니다.");
-        }
-        return claims.getBody().get("userName", String.class);
-    }
-
     public boolean validateJwtToken(String authToken) {
         //주어진 토큰이 유효한지 검사, 만료, 잘못된 토큰 및 예외 처리
         try {
@@ -104,6 +60,11 @@ public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
         }
 
         return false;
+    }
+
+    public String getUserNameFromJwtToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody().getSubject();
     }
 
     public static Long getCurrentUserId() {
