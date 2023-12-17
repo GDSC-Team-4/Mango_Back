@@ -23,6 +23,8 @@ public class UpdateReviewResponse {
 
     public static UpdateReviewResponse fromEntity(Review review){
         return UpdateReviewResponse.builder()
+                .userId(review.getUser().getId())
+                .userName(review.getUser().getUsername())
                 .reviewId(review.getId())
                 .content(review.getContent())
                 .updatedAt(review.getUpdatedAt())

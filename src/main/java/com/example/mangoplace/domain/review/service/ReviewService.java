@@ -14,6 +14,7 @@ import com.example.mangoplace.domain.review.entity.Review;
 import com.example.mangoplace.domain.review.exception.OnlyImageCanUploadedException;
 import com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundException;
 import com.example.mangoplace.domain.review.exception.ReviewIdNotFoundException;
+import com.example.mangoplace.domain.review.exception.UnAuthorizedException;
 import com.example.mangoplace.domain.review.repository.ReviewRepository;
 import com.example.mangoplace.domain.reviewimage.entity.ReviewImage;
 import com.example.mangoplace.domain.reviewimage.repository.ReviewImageRepository;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 import static com.example.mangoplace.domain.review.exception.OnlyImageCanUploadedExceptionCode.ONLY_IMAGE_CAN_UPLOADED_EXCEPTION;
 import static com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundExceptionCode.RESTAURANT_ID_NOT_FOUND_EXCEPTION;
 import static com.example.mangoplace.domain.review.exception.ReviewIdNotFoundExceptionCode.REVIEW_ID_NOT_FOUND_EXCEPTION;
+import static com.example.mangoplace.domain.review.exception.UnAuthorizedExceptionCode.UnAuthorizedException;
 
 
 @Service
@@ -52,6 +54,7 @@ public class ReviewService {
     private String bucketName;
 
     private final Storage storage;
+
 
     @Transactional
     public List<ReviewResponse> getShopReviews(String restaurantId) {
@@ -131,8 +134,16 @@ public class ReviewService {
 
     @Transactional
     public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest, List<MultipartFile> images) throws IOException {
+        Long currentUserId = securityUtil.getCurrentUserId();
+
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
+
+        // 리뷰를 작성한 사용자의 ID와 현재 로그인한 사용자의 ID를 비교
+        if (!review.getUser().getId().equals(currentUserId)) {
+            throw new UnAuthorizedException(UnAuthorizedException);
+        }
+
 
         // 이미지 확장자 체크
         if (images != null) {
@@ -178,11 +189,19 @@ public class ReviewService {
     }
 
 
-
     @Transactional
     public DeleteReviewResponse deleteReview(Long reviewId) {
+
+        Long userId = securityUtil.getCurrentUserId();
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Cannot find user"));
+
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
+
+        if (!review.getUser().getId().equals(userId)) {
+            throw new UnAuthorizedException(UnAuthorizedException);
+        }
 
         // 연관된 이미지를 GCS에서 삭제
         for (ReviewImage image : review.getReviewImages()) {
@@ -196,6 +215,10 @@ public class ReviewService {
     }
 
     private void deleteImage(String imageUrl) {
+
+        Long currentUserId = securityUtil.getCurrentUserId();
+
+
         // imageUrl에서 Blob ID 추출
         String blobId = extractBlobIdFromImageUrl(imageUrl);
 
