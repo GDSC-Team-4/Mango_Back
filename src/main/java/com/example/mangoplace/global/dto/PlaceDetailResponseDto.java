@@ -1,6 +1,6 @@
 package com.example.mangoplace.global.dto;
 
-import com.example.mangoplace.domain.review.entity.Review;
+import com.example.mangoplace.domain.review.dto.response.ReviewResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +15,5 @@ import java.util.List;
 public class PlaceDetailResponseDto {
 
     private Long scrapCount;
-    private List<Review> reviews;
+    private List<ReviewResponse> reviews;
 }

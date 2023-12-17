@@ -1,6 +1,8 @@
 package com.example.mangoplace.global.service;
 
+import com.example.mangoplace.domain.review.dto.response.ReviewResponse;
 import com.example.mangoplace.domain.review.entity.Review;
+import com.example.mangoplace.domain.review.repository.ReviewRepository;
 import com.example.mangoplace.domain.scrap.repository.ScrapRepository;
 import com.example.mangoplace.domain.shop.entity.Shop;
 import com.example.mangoplace.domain.shop.repository.ShopRepository;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
@@ -24,6 +27,7 @@ public class KakaoService {
 
     private final KakaoRepository kakaoRepository;
     private final ShopRepository shopRepository;
+    private final ReviewRepository reviewRepository;
     private final ScrapRepository scrapRepository;
 
     /**
@@ -77,14 +81,15 @@ public class KakaoService {
 
     public PlaceDetailResponseDto placeDetail(String shopId) {
         Shop shop = shopRepository.findByRestaurantId(shopId).orElseThrow(IllegalArgumentException::new);
-        List<Review> reviews = shop.getReviews();
+        List<Review> reviews = reviewRepository.findByShop_RestaurantId(shopId);
 
         String restaurantId = shop.getRestaurantId(); //shopId==restaurantId
         Long scrapCounts = scrapRepository.countByShop_RestaurantId(restaurantId);
 
         return PlaceDetailResponseDto.builder()
-                .reviews(reviews)
+                .reviews(reviews.stream().map(ReviewResponse::fromEntity).collect(Collectors.toList()))
                 .scrapCount(scrapCounts)
                 .build();
     }
+
 }
