@@ -1,6 +1,9 @@
 package com.example.mangoplace.domain.review.service;
 
 
+import com.example.mangoplace.domain.auth.entity.User;
+import com.example.mangoplace.domain.auth.repository.UserRepository;
+import com.example.mangoplace.domain.auth.security.config.SecurityUtil;
 import com.example.mangoplace.domain.review.dto.request.CreateReviewRequest;
 import com.example.mangoplace.domain.review.dto.request.UpdateReviewRequest;
 import com.example.mangoplace.domain.review.dto.response.CreateReviewResponse;
@@ -42,6 +45,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ShopRepository shopRepository;
     private final ReviewImageRepository reviewImageRepository;
+    private final UserRepository userRepository;
+    private final SecurityUtil securityUtil;
 
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
@@ -63,12 +68,18 @@ public class ReviewService {
 
     @Transactional
     public CreateReviewResponse createReviewWithImages(CreateReviewRequest request) throws IOException {
+
+        Long userId = securityUtil.getCurrentUserId();
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Cannot find user"));
+
         Shop shop = shopRepository.findByRestaurantId(request.getRestaurantId())
                 .orElseThrow(() -> new RestaurantIdNotFoundException(RESTAURANT_ID_NOT_FOUND_EXCEPTION));
 
         // 리뷰 엔터티 생성
         Review review = request.toEntity();
         review.setShop(shop);
+        review.setUser(user);
         Review savedReview = reviewRepository.save(review);
 
         // 이미지 업로드 및 연결
