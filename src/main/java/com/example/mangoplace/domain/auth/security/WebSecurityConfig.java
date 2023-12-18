@@ -67,8 +67,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll() //다음 엔드포인트를 인증없이 허용
                                // .requestMatchers("/**").permitAll() //다음 엔드포인트를 인증없이 허용
-                                .requestMatchers("/shops/**").permitAll()
                                 .requestMatchers("/search").permitAll()
+                                .requestMatchers("/main").permitAll()
+                                .requestMatchers("/shops/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/review/**").permitAll()
                                 .requestMatchers("/review/**").authenticated()
                                 .anyRequest().authenticated() //그 외 모든 요청 인증된 사용자에게만 허용
