@@ -11,6 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,9 +38,18 @@ public class ReviewController {
 
 
     @PostMapping("/{restaurantId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CreateReviewResponse> createReview(
             @PathVariable String restaurantId,
             @ModelAttribute CreateReviewRequest reviewWithImageRequest) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            // 사용자가 인증되어 있지 않은 경우
+            // 예외 처리 또는 다른 처리 방법을 선택
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         // 파일 개수 확인
         reviewWithImageRequest.setRestaurantId(restaurantId);
@@ -60,10 +72,19 @@ public class ReviewController {
 
 
     @PutMapping("/{reviewId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UpdateReviewResponse> updateReview(
             @PathVariable Long reviewId,
             @ModelAttribute UpdateReviewRequest updateReviewRequest,
             @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            // 사용자가 인증되어 있지 않은 경우
+            // 예외 처리 또는 다른 처리 방법을 선택
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         try {
             UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, images);
@@ -76,7 +97,15 @@ public class ReviewController {
 
 
     @DeleteMapping("/{reviewId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<DeleteReviewResponse> deleteReview(@PathVariable Long reviewId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            // 사용자가 인증되어 있지 않은 경우
+            // 예외 처리 또는 다른 처리 방법을 선택
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         DeleteReviewResponse response = reviewService.deleteReview(reviewId);
         return ResponseEntity.ok(response);
     }
