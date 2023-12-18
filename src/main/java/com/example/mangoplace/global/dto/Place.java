@@ -1,12 +1,8 @@
 package com.example.mangoplace.global.dto;
 
-import com.example.mangoplace.global.util.dto.Document;
-import com.example.mangoplace.global.util.service.KakaoImageSearchUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * 프론트한테 줄 객체
@@ -25,15 +21,11 @@ public class Place {
     private String x;
     private String y;
     private String placeUrl;
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     private String imageUrl;
 
     public static Place from(KakaoPlace kakaoPlace) {
-        Place place = new Place(
+
+        return new Place(
                 kakaoPlace.getId(),
                 kakaoPlace.getPlaceName(),
                 kakaoPlace.getCategoryName(),
@@ -45,17 +37,7 @@ public class Place {
                 kakaoPlace.getX(),
                 kakaoPlace.getY(),
                 kakaoPlace.getPlaceUrl(),
-                null // Set imageUrl to null initially
+                kakaoPlace.getImageUrl()
         );
-
-        // Use KakaoImageSearchUtils to search for images
-        List<Document> imageDocuments = KakaoImageSearchUtils.searchImage(place.getPlaceName());
-
-        // Check if imageDocuments list is not empty and set the first image URL
-        if (!imageDocuments.isEmpty()) {
-            place.setImageUrl(imageDocuments.get(0).getImageUrl());
-        }
-
-        return place;
     }
 }

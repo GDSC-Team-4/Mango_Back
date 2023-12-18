@@ -2,8 +2,11 @@ package com.example.mangoplace.global.repository;
 
 import com.example.mangoplace.global.dto.KakaoPlace;
 import com.example.mangoplace.global.dto.KakaoResponseDto;
+import com.example.mangoplace.global.dto.Document;
+import com.example.mangoplace.global.dto.ImageResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -14,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -21,26 +25,48 @@ import java.util.List;
 @Slf4j
 public class KakaoRepository {
 
-    public static final String REST_API_KEY = "KakaoAK 4116be3b3256a41225d034f5bab9685f";
+    private Environment environment;
     private final RestTemplate restTemplate;
-    private static final String KAKAO_API_URL = "https://dapi.kakao.com/v2/local/search/keyword.JSON?category_group_code=FD6";
-    private static final String KAKAO_CATEGORY_GROUP_CODE = "category_group_code=FD6";
+
     public List<KakaoPlace> findByKeyword(String keyword) {
-        URI uri = UriComponentsBuilder.fromUriString(KAKAO_API_URL)
-                .queryParam("query", keyword)
+        UriComponentsBuilder placeBuilder = UriComponentsBuilder.fromUriString(environment.getProperty("kakao.place-url"))
                 .encode(StandardCharsets.UTF_8)
+                .queryParam("query", keyword);
+
+        List<KakaoPlace> places = new ArrayList<>();
+        for (int i = 1; i < 4; i++) {
+            URI uri = placeBuilder.queryParam("page", i).build().toUri();
+            RequestEntity<String> request = new RequestEntity<>(getHttpHeaders(), HttpMethod.GET, uri);
+            List<KakaoPlace> kakaoPlaces = restTemplate.exchange(request, KakaoResponseDto.class).getBody().getKakaoPlaces();
+            for (KakaoPlace kakaoPlace : kakaoPlaces) {
+                String region = kakaoPlace.getAddressName().split(" ")[1];
+                String placeName = region + kakaoPlace.getPlaceName();
+                String imageUrl = findImageUrlByPlaceName(placeName);
+                kakaoPlace.setImageUrl(imageUrl);
+            }
+            places.addAll(kakaoPlaces);
+        }
+        return places;
+    }
+
+    private String findImageUrlByPlaceName(String placeName) {
+
+        URI imageUri = UriComponentsBuilder.fromUriString(environment.getProperty("kakao.image-url"))
+                .encode(StandardCharsets.UTF_8)
+                .queryParam("query", placeName)
                 .build()
                 .toUri();
+        RequestEntity<String> imageRequest = new RequestEntity<>(getHttpHeaders(), HttpMethod.GET, imageUri);
+        List<Document> documents = restTemplate.exchange(imageRequest, ImageResponseDto.class).getBody().getDocuments();
 
+        return documents.get(0).getImageUrl();
+    }
+
+    private HttpHeaders getHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", REST_API_KEY);
+        httpHeaders.add("Authorization", environment.getProperty("kakao.rest-api-key"));
         httpHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
         httpHeaders.add("Content-Type", MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
-
-        RequestEntity<String> request = new RequestEntity<>(httpHeaders, HttpMethod.GET, uri);
-
-        log.info(String.valueOf(restTemplate.exchange(request, KakaoResponseDto.class).getBody()));
-
-        return restTemplate.exchange(request, KakaoResponseDto.class).getBody().getKakaoPlaces();
+        return httpHeaders;
     }
 }
