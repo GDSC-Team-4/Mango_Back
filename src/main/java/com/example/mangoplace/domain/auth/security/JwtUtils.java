@@ -67,7 +67,7 @@ public class JwtUtils { //jwt 토큰을 생성하고 유효성을 검사
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    public static Long getCurrentUserId() {
+    public static Long getCurrentUserId(String token) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null) {

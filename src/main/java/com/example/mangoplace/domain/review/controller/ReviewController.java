@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,7 +33,6 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final JwtUtils jwtUtils;
     private final AuthTokenFilter authTokenFilter;
-    private final ObjectMapper objectMapper;
 
     @GetMapping("/{restaurantId}")
     public ResponseEntity<List<ReviewResponse>> getReviews(
@@ -42,8 +42,6 @@ public class ReviewController {
         return ResponseEntity.ok(responses);
     }
 
-
-    @PreAuthorize("hasRole('USER')")
     @PostMapping("/{restaurantId}")
     public ResponseEntity<CreateReviewResponse> createReview(
             @PathVariable String restaurantId,
@@ -70,7 +68,6 @@ public class ReviewController {
 
 
     @PutMapping("/{reviewId}")
-    @PreAuthorize("@reviewControllerSecurity.checkReviewOwnership(#reviewId)")
     public ResponseEntity<UpdateReviewResponse> updateReview(
             @PathVariable Long reviewId,
             @ModelAttribute UpdateReviewRequest updateReviewRequest,
@@ -80,9 +77,7 @@ public class ReviewController {
             String jwtToken = getJwt();
             String currentUsername = jwtUtils.getUserNameFromJwtToken(jwtToken);
 
-            Review review = reviewService.getReviewById(reviewId);
-
-            if (review != null && currentUsername.equals(review.getUser().getUsername())) {
+            if (reviewService.checkReviewOwnership(reviewId, currentUsername)) {
                 UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, images);
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
@@ -95,15 +90,12 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{reviewId}")
-    @PreAuthorize("@reviewControllerSecurity.checkReviewOwnership(#reviewId)")
     public ResponseEntity<DeleteReviewResponse> deleteReview(@PathVariable Long reviewId) {
 
         String jwtToken = getJwt();
         String currentUsername = jwtUtils.getUserNameFromJwtToken(jwtToken);
 
-        Review review = reviewService.getReviewById(reviewId);
-
-        if (review != null && currentUsername.equals(review.getUser().getUsername())) {
+        if (reviewService.checkReviewOwnership(reviewId, currentUsername)) {
             DeleteReviewResponse response = reviewService.deleteReview(reviewId);
             return ResponseEntity.ok(response);
         } else {
@@ -116,4 +108,5 @@ public class ReviewController {
                 RequestContextHolder.getRequestAttributes()).getRequest();
         return authTokenFilter.parseJwt(request);
     }
+
 }

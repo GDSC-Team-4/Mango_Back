@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mangoplace.domain.auth.entity.User;
 import com.example.mangoplace.domain.auth.service.UserDetailsImpl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -58,11 +61,15 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
-                userDetails.getEmail()));
+                userDetails.getEmail(),
+                roles));
     }
 
     private String extractJwtFromRequest(HttpServletRequest request) {

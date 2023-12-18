@@ -209,4 +209,12 @@ public class ReviewService {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
     }
+
+    @Transactional
+    public boolean checkReviewOwnership(Long reviewId, String currentUsername) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
+
+        return review.getUser().getUsername().equals(currentUsername);
+    }
 }
