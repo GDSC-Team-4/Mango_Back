@@ -1,4 +1,4 @@
-package com.example.mangoplace.global.util.dto;
+package com.example.mangoplace.global.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

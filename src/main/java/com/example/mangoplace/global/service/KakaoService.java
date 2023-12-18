@@ -53,7 +53,7 @@ public class KakaoService {
         }
 
         return kakaoPlaces.stream()
-                .map(Place::from)
+                .map(place -> Place.from(place))
                 .collect(collectingAndThen(toList(), PlaceResponseDto::from));
     }
 
