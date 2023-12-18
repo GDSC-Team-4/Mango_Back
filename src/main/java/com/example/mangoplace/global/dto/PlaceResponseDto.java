@@ -11,6 +11,7 @@ import java.util.List;
 @Transactional
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PlaceResponseDto {
+
     private final List<Place> data;
 
     public static PlaceResponseDto from(List<Place> places) {
