@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mangoplace.domain.auth.entity.User;
 import com.example.mangoplace.domain.auth.service.UserDetailsImpl;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
