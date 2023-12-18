@@ -44,7 +44,7 @@ public class KakaoService {
         }
 
         for (KakaoPlace kakaoPlace : kakaoPlaces) {
-            if(!shopRepository.existsShopByRestaurantId(kakaoPlace.getId())){
+            if (!shopRepository.existsShopByRestaurantId(kakaoPlace.getId())) {
                 Shop shop = Shop.builder()
                         .restaurantId(kakaoPlace.getId())
                         .build();
@@ -53,7 +53,7 @@ public class KakaoService {
         }
 
         return kakaoPlaces.stream()
-                .map(place -> Place.from(place))
+                .map(Place::from)
                 .collect(collectingAndThen(toList(), PlaceResponseDto::from));
     }
 
@@ -69,6 +69,14 @@ public class KakaoService {
 
             if (kakaoPlaces.isEmpty()) {
                 throw new IllegalArgumentException("검색결과가 없습니다");
+            }
+            for (KakaoPlace kakaoPlace : kakaoPlaces) {
+                if (!shopRepository.existsShopByRestaurantId(kakaoPlace.getId())) {
+                    Shop shop = Shop.builder()
+                            .restaurantId(kakaoPlace.getId())
+                            .build();
+                    shopRepository.save(shop);
+                }
             }
             PlaceResponseDto placeResponseDto = kakaoPlaces.stream()
                     .map(Place::from)

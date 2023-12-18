@@ -29,13 +29,15 @@ public class KakaoRepository {
     private final RestTemplate restTemplate;
 
     public List<KakaoPlace> findByKeyword(String keyword) {
-        UriComponentsBuilder placeBuilder = UriComponentsBuilder.fromUriString(environment.getProperty("kakao.place-url"))
-                .encode(StandardCharsets.UTF_8)
-                .queryParam("query", keyword);
+
 
         List<KakaoPlace> places = new ArrayList<>();
-        for (int i = 1; i < 4; i++) {
+        for (int i = 1; i < 3; i++) {
+            UriComponentsBuilder placeBuilder = UriComponentsBuilder.fromUriString(environment.getProperty("kakao.place-url"))
+                .encode(StandardCharsets.UTF_8)
+                .queryParam("query", keyword);
             URI uri = placeBuilder.queryParam("page", i).build().toUri();
+            log.info(String.valueOf(uri));
             RequestEntity<String> request = new RequestEntity<>(getHttpHeaders(), HttpMethod.GET, uri);
             List<KakaoPlace> kakaoPlaces = restTemplate.exchange(request, KakaoResponseDto.class).getBody().getKakaoPlaces();
             for (KakaoPlace kakaoPlace : kakaoPlaces) {
@@ -58,8 +60,11 @@ public class KakaoRepository {
                 .toUri();
         RequestEntity<String> imageRequest = new RequestEntity<>(getHttpHeaders(), HttpMethod.GET, imageUri);
         List<Document> documents = restTemplate.exchange(imageRequest, ImageResponseDto.class).getBody().getDocuments();
-
-        return documents.get(0).getImageUrl();
+        if (!documents.isEmpty()) {
+            return documents.get(0).getImageUrl();
+        }
+        else
+            return "https://storage.googleapis.com/grape-plate/GrapePlate.png";
     }
 
     private HttpHeaders getHttpHeaders() {
