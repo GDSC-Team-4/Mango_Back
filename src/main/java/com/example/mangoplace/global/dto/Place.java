@@ -1,13 +1,12 @@
 package com.example.mangoplace.global.dto;
 
+import com.example.mangoplace.global.util.dto.Document;
+import com.example.mangoplace.global.util.service.KakaoImageSearchUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
-import java.util.Objects;
+import java.util.List;
 
 /**
  * 프론트한테 줄 객체
@@ -26,6 +25,11 @@ public class Place {
     private String x;
     private String y;
     private String placeUrl;
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     private String imageUrl;
 
     public static Place from(KakaoPlace kakaoPlace) {
@@ -44,39 +48,14 @@ public class Place {
                 null // Set imageUrl to null initially
         );
 
-        // Extract image URL by parsing HTML
-        String imageUrl = extractImageUrl(place.getPlaceUrl());
-        place.setImageUrl(imageUrl);
+        // Use KakaoImageSearchUtils to search for images
+        List<Document> imageDocuments = KakaoImageSearchUtils.searchImage(place.getPlaceName());
+
+        // Check if imageDocuments list is not empty and set the first image URL
+        if (!imageDocuments.isEmpty()) {
+            place.setImageUrl(imageDocuments.get(0).getImageUrl());
+        }
 
         return place;
     }
-
-    private void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    // Place 클래스의 extractImageUrl 메서드 부분
-    private static String extractImageUrl(String placeUrl) {
-        try {
-            Document document = Jsoup.connect(placeUrl).get();
-            System.out.println(document.html());
-
-            // 추가: 이미지 엘리먼트를 안전하게 찾기 위한 선택자 변경
-            Element imageElement = document.select("meta[property=og:image]").first();
-
-            // 추가: null 체크 및 안전하게 이미지 URL 추출
-            if (imageElement != null) {
-                String imageUrl = imageElement.attr("content");
-                return imageUrl;
-            } else {
-                // 이미지가 없을 경우 처리
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
 }
