@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/review")
+@RequestMapping("/review")
 @AllArgsConstructor
 public class ReviewController {
 
