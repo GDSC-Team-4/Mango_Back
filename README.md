@@ -54,10 +54,14 @@
       <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/e985a164-fdc0-44ab-82dc-4d962fa8ae2f></td>
     </tr> 
                 <tr align="center">
-      <th>리뷰(등록,수정,삭제)</th>
+      <th>리뷰(등록,조회,수정,삭제)</th>
     </tr>
     <tr>      
       <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/9a846a14-dc19-4b0a-a0c9-a9f34e2dff0b></td>
+    </tr>
+        <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/9216f3f2-2d70-4355-bdf9-f6c2ef4f4c27
+></td>
     </tr>
         <tr>      
       <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/5f316128-2914-48b9-ac21-52a3c0669ab2></td>
