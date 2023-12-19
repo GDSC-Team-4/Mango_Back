@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -51,7 +52,10 @@ public class ReviewController {
         reviewWithImageRequest.setRestaurantId(restaurantId);
 
         try {
-            CreateReviewResponse response = reviewService.createReviewWithImages(reviewWithImageRequest);
+            String jwtToken = getJwt();
+            String currentUsername = jwtUtils.getUserNameFromJwtToken(jwtToken);
+
+            CreateReviewResponse response = reviewService.createReviewWithImages(reviewWithImageRequest, currentUsername);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IOException e) {
             // 파일이 제대로 받아졌는지 확인
@@ -71,21 +75,22 @@ public class ReviewController {
     public ResponseEntity<UpdateReviewResponse> updateReview(
             @PathVariable Long reviewId,
             @ModelAttribute UpdateReviewRequest updateReviewRequest,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+            @RequestParam(value = "images", required = false) List<MultipartFile> images) throws Exception {
 
         try {
             String jwtToken = getJwt();
             String currentUsername = jwtUtils.getUserNameFromJwtToken(jwtToken);
-
-            if (reviewService.checkReviewOwnership(reviewId, currentUsername)) {
-                UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, images);
+            if(reviewService.checkReviewOwnership(reviewId, currentUsername)) {
+                UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, images, currentUsername);
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
+
         } catch (IOException e) {
             // 이미지 업로드 중 오류 발생 시 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+           // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -96,7 +101,7 @@ public class ReviewController {
         String currentUsername = jwtUtils.getUserNameFromJwtToken(jwtToken);
 
         if (reviewService.checkReviewOwnership(reviewId, currentUsername)) {
-            DeleteReviewResponse response = reviewService.deleteReview(reviewId);
+            DeleteReviewResponse response = reviewService.deleteReview(reviewId, currentUsername);
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

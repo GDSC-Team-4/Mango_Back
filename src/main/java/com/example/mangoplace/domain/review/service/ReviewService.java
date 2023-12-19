@@ -1,6 +1,8 @@
 package com.example.mangoplace.domain.review.service;
 
 
+import com.example.mangoplace.domain.auth.entity.User;
+import com.example.mangoplace.domain.auth.repository.UserRepository;
 import com.example.mangoplace.domain.review.dto.request.CreateReviewRequest;
 import com.example.mangoplace.domain.review.dto.request.UpdateReviewRequest;
 import com.example.mangoplace.domain.review.dto.response.CreateReviewResponse;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +36,7 @@ import java.util.stream.Collectors;
 import static com.example.mangoplace.domain.review.exception.OnlyImageCanUploadedExceptionCode.ONLY_IMAGE_CAN_UPLOADED_EXCEPTION;
 import static com.example.mangoplace.domain.review.exception.RestaurantIdNotFoundExceptionCode.RESTAURANT_ID_NOT_FOUND_EXCEPTION;
 import static com.example.mangoplace.domain.review.exception.ReviewIdNotFoundExceptionCode.REVIEW_ID_NOT_FOUND_EXCEPTION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 
 @Service
@@ -42,6 +46,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ShopRepository shopRepository;
     private final ReviewImageRepository reviewImageRepository;
+    private final UserRepository userRepository;
 
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
@@ -62,12 +67,20 @@ public class ReviewService {
 
 
     @Transactional
-    public CreateReviewResponse createReviewWithImages(CreateReviewRequest request) throws IOException {
+    public CreateReviewResponse createReviewWithImages(CreateReviewRequest request, String username) throws IOException {
+        User user = userRepository.findByUsername(username).orElseThrow(()-> new RestaurantIdNotFoundException(RESTAURANT_ID_NOT_FOUND_EXCEPTION));
         Shop shop = shopRepository.findByRestaurantId(request.getRestaurantId())
                 .orElseThrow(() -> new RestaurantIdNotFoundException(RESTAURANT_ID_NOT_FOUND_EXCEPTION));
 
         // 리뷰 엔터티 생성
-        Review review = request.toEntity();
+        // Review review = request.toEntity();
+        Review review = Review.builder()
+                .content(request.getContent())
+                .star(request.getStar())
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
+
         review.setShop(shop);
         Review savedReview = reviewRepository.save(review);
 
@@ -95,7 +108,7 @@ public class ReviewService {
             }
         }
 
-        return CreateReviewResponse.fromEntity(savedReview);
+        return CreateReviewResponse.fromEntity(savedReview, user);
     }
 
 
@@ -118,10 +131,18 @@ public class ReviewService {
     }
 
     @Transactional
-    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest, List<MultipartFile> images) throws IOException {
+    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest updateReviewRequest, List<MultipartFile> images, String username) throws IOException {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
-
+      /*  try {
+            this.checkReviewOwnership(reviewId, username);
+        } catch (Exception e) {
+            throw new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION);
+        }
+*/
         // 이미지 확장자 체크
         if (images != null) {
             for (MultipartFile image : images) {
@@ -162,13 +183,17 @@ public class ReviewService {
 
         Review updatedReview = reviewRepository.save(review);
 
-        return UpdateReviewResponse.fromEntity(updatedReview);
+        return UpdateReviewResponse.fromEntity(updatedReview, user);
     }
 
 
 
     @Transactional
-    public DeleteReviewResponse deleteReview(Long reviewId) {
+    public DeleteReviewResponse deleteReview(Long reviewId, String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
+
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewIdNotFoundException(REVIEW_ID_NOT_FOUND_EXCEPTION));
 
