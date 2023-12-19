@@ -4,13 +4,11 @@ import com.example.mangoplace.domain.scrap.dto.ScrapCreateResponse;
 import com.example.mangoplace.domain.scrap.service.ScrapService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api")
 public class ScrapController {
 
     private final ScrapService scrapService;
