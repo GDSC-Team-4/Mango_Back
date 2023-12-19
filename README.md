@@ -66,11 +66,19 @@
       <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/c03ef6a2-e68d-4ced-b217-ba296d827973></td>
     </tr> 
                 <tr align="center">
-      <th>스크랩</th>    
+      <th>스크랩(등록,삭제)</th>    
     </tr>
     <tr>      
-      <td><img src=></td>     
-    </tr> 
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/f4cf9510-b949-4ba8-afb4-5b712a9f2fb1></td>     
+    </tr>
+     <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/cd25f553-ba2d-46af-86c8-e18a88ac2dce></td>     
+    </tr>
+          <th>상세페이지</th>    
+    </tr>
+    <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/e52a940d-4933-458d-bc93-b4a10ffde7fc></td>     
+    </tr>
   </table>
 </div>
 
