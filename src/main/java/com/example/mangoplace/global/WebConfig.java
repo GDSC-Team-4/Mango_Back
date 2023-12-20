@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080","http://localhost:3000","http://34.64.77.143:8080","http://34.64.77.143")
+                .allowedOrigins("http://localhost:8080","http://localhost:3000","http://34.64.77.143:8080","http://34.64.77.143","https://grapeplate.netlify.app")
                 .allowedHeaders("Authorization", "Content-Type")
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .allowCredentials(true)
