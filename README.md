@@ -2,7 +2,7 @@
 
 ■ 프로젝트명
 
-- GrapePlate : [사이트 링크]()
+- GrapePlate : [사이트 링크](https://grapeplate.netlify.app/)
 - organization : [링크](https://github.com/GDSC-Team-4)
 
 <br>
