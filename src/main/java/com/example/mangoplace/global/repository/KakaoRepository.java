@@ -19,6 +19,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @AllArgsConstructor
@@ -29,13 +30,15 @@ public class KakaoRepository {
     private final RestTemplate restTemplate;
 
     public List<KakaoPlace> findByKeyword(String keyword) {
-        UriComponentsBuilder placeBuilder = UriComponentsBuilder.fromUriString(environment.getProperty("kakao.place-url"))
-                .encode(StandardCharsets.UTF_8)
-                .queryParam("query", keyword);
+
 
         List<KakaoPlace> places = new ArrayList<>();
-        for (int i = 1; i < 4; i++) {
+        for (int i = 1; i < 3; i++) {
+            UriComponentsBuilder placeBuilder = UriComponentsBuilder.fromUriString(environment.getProperty("kakao.place-url"))
+                .encode(StandardCharsets.UTF_8)
+                .queryParam("query", keyword);
             URI uri = placeBuilder.queryParam("page", i).build().toUri();
+            log.info(String.valueOf(uri));
             RequestEntity<String> request = new RequestEntity<>(getHttpHeaders(), HttpMethod.GET, uri);
             List<KakaoPlace> kakaoPlaces = restTemplate.exchange(request, KakaoResponseDto.class).getBody().getKakaoPlaces();
             for (KakaoPlace kakaoPlace : kakaoPlaces) {
@@ -50,16 +53,34 @@ public class KakaoRepository {
     }
 
     private String findImageUrlByPlaceName(String placeName) {
-
         URI imageUri = UriComponentsBuilder.fromUriString(environment.getProperty("kakao.image-url"))
                 .encode(StandardCharsets.UTF_8)
                 .queryParam("query", placeName)
                 .build()
                 .toUri();
         RequestEntity<String> imageRequest = new RequestEntity<>(getHttpHeaders(), HttpMethod.GET, imageUri);
-        List<Document> documents = restTemplate.exchange(imageRequest, ImageResponseDto.class).getBody().getDocuments();
 
-        return documents.get(0).getImageUrl();
+        ImageResponseDto imageResponse = restTemplate.exchange(imageRequest, ImageResponseDto.class).getBody();
+
+        if (imageResponse != null) {
+            List<Document> documents = imageResponse.getDocuments();
+
+            // Filter documents by checking if the image URL ends with ".jpg" or ".png"
+            List<Document> filteredDocuments = documents.stream()
+                    .filter(document -> {
+                        String imageUrl = document.getImageUrl();
+                        return imageUrl != null && (imageUrl.endsWith(".jpg") || imageUrl.endsWith(".png"));
+                    })
+                    .collect(Collectors.toList());
+
+            if (!filteredDocuments.isEmpty()) {
+                // Return the image URL of the first document in the filtered list
+                return filteredDocuments.get(0).getImageUrl();
+            }
+        }
+
+        // If no suitable image URL is found, return a default URL
+        return "https://storage.googleapis.com/grape-plate/GrapePlate.png";
     }
 
     private HttpHeaders getHttpHeaders() {

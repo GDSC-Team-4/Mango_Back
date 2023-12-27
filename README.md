@@ -36,26 +36,53 @@
       <th>로그인/회원가입</th>
     </tr>
     <tr>      
-      <td><img src=></td>  
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/1042b95b-c17a-44bc-91b2-fa93d46b7554></td>
+      </tr>
+     <tr>  
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/6f6e7a3a-a539-411c-ad07-c30daef43b36></td> 
     </tr>    
         <tr align="center">
       <th>검색</th>       
     </tr>
     <tr>      
-      <td><img src=></td>     
-    </tr>    
-            <tr align="center">
-      <th>리뷰</th>
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/40f79cd8-be34-4f47-beb1-c2a4c60c9fc2></td>     
+    </tr> 
+          <tr align="center">
+                 <th>메인페이지</th>
     </tr>
     <tr>      
-      <td><img src=></td>
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/e985a164-fdc0-44ab-82dc-4d962fa8ae2f></td>
     </tr> 
                 <tr align="center">
-      <th>스크랩</th>    
+      <th>리뷰(등록,조회,수정,삭제)</th>
     </tr>
     <tr>      
-      <td><img src=></td>     
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/9a846a14-dc19-4b0a-a0c9-a9f34e2dff0b></td>
+    </tr>
+        <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/9216f3f2-2d70-4355-bdf9-f6c2ef4f4c27
+></td>
+    </tr>
+        <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/5f316128-2914-48b9-ac21-52a3c0669ab2></td>
+    </tr>
+        <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/c03ef6a2-e68d-4ced-b217-ba296d827973></td>
     </tr> 
+                <tr align="center">
+      <th>스크랩(등록,삭제)</th>    
+    </tr>
+    <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/f4cf9510-b949-4ba8-afb4-5b712a9f2fb1></td>     
+    </tr>
+     <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/cd25f553-ba2d-46af-86c8-e18a88ac2dce></td>     
+    </tr>
+          <th>상세페이지</th>    
+    </tr>
+    <tr>      
+      <td><img src=https://github.com/GDSC-Team-4/Mango_Back/assets/108813475/e52a940d-4933-458d-bc93-b4a10ffde7fc></td>     
+    </tr>
   </table>
 </div>
 

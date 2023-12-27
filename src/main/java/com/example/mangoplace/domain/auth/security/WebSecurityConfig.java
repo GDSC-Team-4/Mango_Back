@@ -75,6 +75,7 @@ public class WebSecurityConfig {
                                 // .requestMatchers("/**").permitAll() //다음 엔드포인트를 인증없이 허용
                                 .requestMatchers("/search").permitAll()
                                 .requestMatchers("/main").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/review").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/shops/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/review/**").permitAll()
                                 .requestMatchers("/review/**").authenticated()
