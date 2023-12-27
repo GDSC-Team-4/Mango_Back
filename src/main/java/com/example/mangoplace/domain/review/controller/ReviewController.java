@@ -36,6 +36,12 @@ public class ReviewController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("")
+    public ResponseEntity<List<ReviewResponse>> getUserReviews(){
+        List<ReviewResponse> responses = reviewService.getUserReviews();
+        return ResponseEntity.ok(responses);
+    }
+
 
     @PostMapping("/{restaurantId}")
     @PreAuthorize("isAuthenticated()")

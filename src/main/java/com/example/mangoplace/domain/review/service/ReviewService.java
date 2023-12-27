@@ -71,6 +71,20 @@ public class ReviewService {
 
 
     @Transactional
+    public List<ReviewResponse> getUserReviews(){
+        Long userId = securityUtil.getCurrentUserId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Cannot find user"));
+
+        List<Review> reviews = reviewRepository.findReviewsByUser(user);
+
+        return reviews.stream()
+                .map(ReviewResponse::fromEntity)
+                .collect(Collectors.toList());
+
+    }
+
+
+    @Transactional
     public CreateReviewResponse createReviewWithImages(CreateReviewRequest request) throws IOException {
 
         Long userId = securityUtil.getCurrentUserId();
